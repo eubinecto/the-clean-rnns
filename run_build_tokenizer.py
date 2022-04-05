@@ -18,6 +18,8 @@ from tokenizers.trainers import BpeTrainer
 from cleanrnns.paths import ROOT_DIR
 from cleanrnns.fetchers import fetch_config, fetch_nsmc
 
+os.environ['TOKENIZERS_PARALLELISM'] = 'true'
+
 
 def main():
     parser = argparse.ArgumentParser()
