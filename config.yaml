@@ -1,0 +1,21 @@
+tokenizer:
+  ver: tokenizer-bpe-0
+  desc: A BPE tokenizer.
+  # the symbols to use for special tokens
+  pad: <pad>
+  unk: <unk>
+  bos: <bos>
+  eos: <eos>
+  vocab_size: 30000
+
+
+rnn:
+  ver: rnn-cls-nsmc-0
+  desc: A baseline model. overfitted to the training set.
+  batch_size: 64
+  shuffle: 1
+  max_epochs: 100
+  lr: 0.0001
+  datamodule: nsmc
+  val_ratio: 0.2
+  max_length: 150
