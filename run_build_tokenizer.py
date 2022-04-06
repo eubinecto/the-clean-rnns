@@ -38,8 +38,9 @@ def main():
     tokenizer.normalizer = normalizers.Sequence([Lowercase()])  # noqa
     with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
         # --- prepare the data --- #
-        train, test = fetch_nsmc(config['entity'], run)
+        train, val, test = fetch_nsmc(config['entity'], run)
         iterator = chain((row[0] for row in train.data),
+                         (row[0] for row in val.data),
                          (row[0] for row in test.data))
         # --- train the tokenizer --- #
         tokenizer.train_from_iterator(iterator, trainer=trainer)

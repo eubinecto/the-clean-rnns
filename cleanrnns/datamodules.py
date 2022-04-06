@@ -40,19 +40,16 @@ class NSMC(pl.LightningDataModule):
 
     def setup(self, stage: Optional[str] = None):
         if stage == "fit" or stage is None:
-            train = self.build_dataset(self.nsmc[0])
-            val_size = int(len(train) * self.config['val_ratio'])
-            train_size = len(train) - val_size
-            self.train, self.val = random_split(train, [train_size, val_size])
+            self.train = self.build_dataset(self.nsmc[0])
+            self.val = self.build_dataset(self.nsmc[1])
         elif stage == "test" or stage is None:
-            self.test = self.build_dataset(self.nsmc[1])
+            self.test = self.build_dataset(self.nsmc[2])
         else:
             raise NotImplementedError
 
     def build_dataset(self, table: wandb.Table) -> DatasetForClassification:
-        X = InputsForClassificationBuilder(self.tokenizer, self.config['max_length'])( table.data)  # (N, L)
+        X = InputsForClassificationBuilder(self.tokenizer, self.config['max_length'])(table.data)  # (N, L)
         y = LabelsForClassificationBuilder()(table.data)  # (N, L)
-        # to save gpu memory
         return DatasetForClassification(X, y)  # noqa
 
     def train_dataloader(self) -> DataLoader:

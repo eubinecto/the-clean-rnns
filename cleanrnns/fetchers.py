@@ -1,8 +1,7 @@
 import os
-from typing import Tuple
-
 import yaml
 import wandb
+from typing import Tuple
 from tokenizers import Tokenizer
 from wandb.sdk.wandb_run import Run
 from models import RNN
@@ -33,15 +32,16 @@ def fetch_tokenizer(entity: str, run: Run = None) -> Tokenizer:
     return tokenizer
 
 
-def fetch_nsmc(entity: str, run: Run = None) -> Tuple[wandb.Table, wandb.Table]:
+def fetch_nsmc(entity: str, run: Run = None) -> Tuple[wandb.Table, wandb.Table, wandb.Table]:
     ver = fetch_config()['nsmc']['ver']
     if run:
         artifact = run.use_artifact(f"nsmc:{ver}", type="dataset")
     else:
         artifact = wandb.Api().artifact(f"{entity}/the-clean-rnns/nsmc:{ver}", type="dataset")
     train = artifact.get("train")
+    val = artifact.get("val")
     test = artifact.get("test")
-    return train, test  # noqa
+    return train, val, test  # noqa
 
 
 def fetch_rnn(entity: str, ver: str, run: Run = None) -> RNN:

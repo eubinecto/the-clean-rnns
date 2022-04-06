@@ -1,11 +1,12 @@
 nsmc:
-  ver: raw
-  desc: Naver Sentiment Movie Corpus. This is the raw version of the corpus. No pre-processing has been done.
-
+  ver: with-val
+  desc: Naver Sentiment Movie Corpus. Validation set is added. Still, no preprocessing is done.
+  val_ratio: 0.2
+  seed: 1004  
 
 tokenizer:
-  ver: bpe-nsmc-raw
-  desc: "A BPE tokenizer, trained on nsmc:raw"
+  ver: bpe-nsmc-with-val
+  desc: "A BPE tokenizer, trained on nsmc:with-val"
   # the symbols to use for special tokens
   pad: <pad>
   unk: <unk>
@@ -15,12 +16,11 @@ tokenizer:
 
 
 rnn:
-  ver: cls-nsmc-overfit
-  desc: A baseline model. overfitted to the training set.
+  ver: cls-nsmc-with-val-overfit
+  desc: "A baseline model. over-fitted to nsmc:with-val."
   batch_size: 64
   shuffle: 1
   max_epochs: 100
   lr: 0.0001
   datamodule: nsmc
-  val_ratio: 0.2
   max_length: 150
