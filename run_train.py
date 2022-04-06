@@ -3,9 +3,8 @@ import wandb
 import argparse
 import torch
 import pytorch_lightning as pl
-from termcolor import colored
 from pytorch_lightning.loggers import WandbLogger
-from cleanrnns.models import RNNForClassification
+from cleanrnns.models import RNNForClassification, LSTMForClassification
 from cleanrnns.datamodules import NSMC
 from cleanrnns.fetchers import fetch_config, fetch_tokenizer
 from cleanrnns.paths import ROOT_DIR
@@ -25,13 +24,14 @@ def main():
     config.update(vars(args))
     with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
         # --- prepare a pre-trained tokenizer & a module to train --- #
+        tokenizer = fetch_tokenizer(config['entity'], run)
+        datamodule = NSMC(config, tokenizer, run)
         if config['model'] == "rnn_for_classification":
-            tokenizer = fetch_tokenizer(config['entity'], run)
             model = RNNForClassification(tokenizer.get_vocab_size(), config['hidden_size'],
                                          config['num_classes'], config['lr'], config['depth'])
-            datamodule = NSMC(config, tokenizer, run)
         elif config['model'] == "lstm_for_classification":
-            raise NotImplementedError
+            model = LSTMForClassification(tokenizer.get_vocab_size(), config['hidden_size'],
+                                          config['num_classes'], config['lr'], config['depth'])
         elif config['model'] == "bilstm_for_classification":
             raise NotImplementedError
         elif config['model'] == "bilstmsearch_for_classification":

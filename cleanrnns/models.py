@@ -98,10 +98,9 @@ class RNNForClassification(ClassificationBase):
 class LSTMForClassification(ClassificationBase):
 
     def __init__(self, vocab_size: int, hidden_size: int,
-                 num_classes: int, lr: float, depth: int):
+                 num_classes: int, lr: float, depth: int):  # noqa
         self.save_hyperparameters()
-        super().__init__(LSTM(), num_classes)
-        raise NotImplementedError
+        super().__init__(LSTM(vocab_size, hidden_size, depth), num_classes)
 
 
 class BiLSTMForClassification(ClassificationBase):
