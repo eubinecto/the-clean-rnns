@@ -7,11 +7,11 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 
 
 def main():
-    config = fetch_config()
-    config['rnn']['num_workers'] = os.cpu_count()
-    config['rnn']['entity'] = "eubinecto"
+    config = fetch_config()['rnn_for_classification']
+    config['num_workers'] = os.cpu_count()
+    config['entity'] = "eubinecto"
     tokenizer = fetch_tokenizer("eubinecto")
-    datamodule = NSMC(config['rnn'], tokenizer)
+    datamodule = NSMC(config, tokenizer)
     datamodule.prepare_data()
     datamodule.setup()  # this will tak some time
     print("--- A batch from the training set ---")

@@ -15,12 +15,13 @@ tokenizer:
   vocab_size: 30000
 
 
-rnn:
+rnn_for_classification:
   ver: cls-nsmc-with-val-overfit
-  desc: "A baseline model. over-fitted to nsmc:with-val."
+  desc: "A baseline sentiment classifier (hence the `cls` prefix) . over-fitted to nsmc:with-val."
   batch_size: 64
   shuffle: 1
   max_epochs: 100
   lr: 0.0001
   datamodule: nsmc
   max_length: 150
+  num_classes: 2

@@ -1,3 +1,6 @@
+"""
+use streamlit to deploy them
+"""
 
 
 def main():
@@ -5,4 +8,4 @@ def main():
 
 
 if __name__ == '__main__':
-    mai
+    main()
