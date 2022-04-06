@@ -22,13 +22,13 @@ def main():
     parser.add_argument("--upload", dest='upload', action='store_true', default=False)
     args = parser.parse_args()
     # prepare the datamodule
-    config = vars(args)
+    config = fetch_config()[args.model]
+    config.update(vars(args))
     if not config['upload']:
         print(colored("WARNING: YOU CHOSE NOT TO UPLOAD. NOTHING BUT LOGS WILL BE SAVED TO WANDB", color="red"))
     with wandb.init(entity=config['entity'], project="the-clean-rnns", config=vars(args)) as run:
         # --- prepare a pre-trained tokenizer & a module to train --- #
         if config['model'] == "rnn_for_classification":
-            config.update(fetch_config()[config['model']])
             tokenizer = fetch_tokenizer(config['entity'], run)
             model = RNNForClassification(tokenizer.get_vocab_size(), config['hidden_size'],
                                          config['num_classes'], config['lr'], config['depth'])
