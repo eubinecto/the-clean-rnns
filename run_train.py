@@ -17,6 +17,8 @@ def main():
     parser.add_argument("model", type=str)
     parser.add_argument("--num_workers", type=int, default=os.cpu_count())
     parser.add_argument("--log_every_n_steps", type=int, default=1)
+    parser.add_argument("--limit_train_batches", type=float, default=None)
+    parser.add_argument("--limit_val_batches", type=float, default=None)
     parser.add_argument("--fast_dev_run", action="store_true", default=False)
     args = parser.parse_args()
     # prepare the datamodule
@@ -42,6 +44,8 @@ def main():
         trainer = pl.Trainer(max_epochs=config['max_epochs'],
                              fast_dev_run=config['fast_dev_run'],
                              log_every_n_steps=config['log_every_n_steps'],
+                             limit_train_batches=config['limit_train_batches'],
+                             limit_val_batches=config['limit_val_batches'],
                              gpus=torch.cuda.device_count(),
                              default_root_dir=str(ROOT_DIR),
                              enable_checkpointing=False,

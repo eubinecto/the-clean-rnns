@@ -16,25 +16,25 @@ tokenizer:
 
 
 rnn_for_classification:
-  ver: cls-nsmc-with-val-overfit
-  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is over-fitted to nsmc:with-val."
+  ver: cls-nsmc-with-val-overfit-1
+  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is over-fitted to nsmc:with-val. Padding strategy = left "
   max_epochs: 3
   batch_size: 1024
   max_length: 150
   hidden_size: 512
   depth: 2
   shuffle: 1
-  lr: 0.0001
+  lr: 0.001
   num_classes: 2
 
 lstm_for_classification:
-  ver: cls-nsmc-with-val-overfit
-  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is over-fitted to nsmc:with-val."
+  ver: cls-nsmc-with-val-overfit-1
+  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is over-fitted to nsmc:with-val. Padding strategy = right"
   max_epochs: 3
   batch_size: 1024
   max_length: 150
   hidden_size: 512
   depth: 2
   shuffle: 1
-  lr: 0.0001
+  lr: 0.001
   num_classes: 2

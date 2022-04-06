@@ -7,6 +7,7 @@ def inputs_for_classification(text2label: List[Tuple[str, Optional[int]]], max_l
     texts = [text for text, _ in text2label]
     pad_token = tokenizer.pad_token  # noqa
     tokenizer.enable_padding(pad_token=pad_token,
+                             direction="left",
                              pad_id=tokenizer.token_to_id(pad_token),  # noqa
                              length=max_length)
     # don't add special tokens, we will add them ourselves

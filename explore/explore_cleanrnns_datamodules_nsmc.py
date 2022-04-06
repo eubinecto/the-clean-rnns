@@ -15,18 +15,18 @@ def main():
     datamodule.setup()  # this will tak some time
     print("--- A batch from the training set ---")
     for batch in datamodule.train_dataloader():
-        X, y = batch
-        print(X)  # (N, L)
-        print(X.shape)
+        x, y = batch
+        print(x)  # (N, L)
+        print(x.shape)
         print(y)  # (N,)
         print(y.shape)
         break
 
     print("--- A batch from the validation set ---")
     for batch in datamodule.val_dataloader():
-        X, y = batch
-        print(X)  # (N, L)
-        print(X.shape)
+        x, y = batch
+        print(x)  # (N, L)
+        print(x.shape)
         print(y)  # (N,)
         print(y.shape)
         break

@@ -1,7 +1,6 @@
 import torch
 import pytorch_lightning as pl
 from typing import Union, Tuple, List
-from tqdm import tqdm
 from torch.nn import functional as F
 from torchmetrics import functional as mF
 from cleanrnns.rnns import RNN, LSTM, BiLSTM, BiLSTMSearch
@@ -28,7 +27,7 @@ class ClassificationBase(pl.LightningModule):
     def on_train_start(self):
         # deep models should be initialised with so-called "Xavier initialisation"
         # refer to: https://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf
-        for param in tqdm(self.parameters(), desc="initialising weights..."):
+        for param in self.parameters():
             if param.dim() > 1:
                 torch.nn.init.xavier_uniform_(param)
 
