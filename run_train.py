@@ -26,7 +26,7 @@ def main():
     config.update(vars(args))
     if not config['upload']:
         print(colored("WARNING: YOU CHOSE NOT TO UPLOAD. NOTHING BUT LOGS WILL BE SAVED TO WANDB", color="red"))
-    with wandb.init(entity=config['entity'], project="the-clean-rnns", config=vars(args)) as run:
+    with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
         # --- prepare a pre-trained tokenizer & a module to train --- #
         if config['model'] == "rnn_for_classification":
             tokenizer = fetch_tokenizer(config['entity'], run)
