@@ -7,20 +7,20 @@ class DatasetForClassification(Dataset):
     """
     감성분석, 혐오분석 등
     """
-    def __init__(self, X: torch.Tensor, y: torch.Tensor):
+    def __init__(self, x: torch.Tensor, y: torch.Tensor):
         """
-        :param X: (N, L)
+        :param x: (N, L)
         :param y: (N,)
         """
-        self.X = X
+        self.x = x
         self.y = y
 
     def __len__(self):
-        assert self.X.shape[0] == self.y.shape[0]
+        assert self.x.shape[0] == self.y.shape[0]
         return self.y.shape[0]
 
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        return self.X[index], self.y[index]
+        return self.x[index], self.y[index]
 
 
 class DatasetForSeq2Seq(Dataset):

@@ -13,10 +13,20 @@ class ClassificationBase(pl.LightningModule):
         self.encoder = encoder
         self.classifier = torch.nn.Linear(self.hparams['hidden_size'], num_classes)
 
-    def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor], *args) -> dict:
-        X, y = batch
-        memories = self.encoder(X)  # (N, L) -> (N, L, H)
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        memories = self.encoder(x)  # (N, L) -> (N, L, H)
         last = memories[:, -1]  # (N, L, H) -> (N, H)
+        return last
+
+    def predict(self, x: torch.Tensor) -> torch.Tensor:
+        last = self.forward(x)  # (N, L) -> (N, H)
+        logits = self.classifier(last)  # (N, H) -> (N, C)
+        probs = torch.softmax(logits, dim=-1)  # (N, C) -> (N, C) (normalised over C)
+        return probs
+
+    def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor], *args) -> dict:
+        x, y = batch
+        last = self.forward(x)  # (N, L) -> (N, H)
         logits = self.classifier(last)  # (N, H) -> (N, C)
         loss = F.cross_entropy(logits, y).sum()  # (N, C), (N,) -> (N,) -> (,)
         return {
@@ -51,8 +61,8 @@ class ClassificationBase(pl.LightningModule):
         self.log("Validation/accuracy", accuracy)
 
     def test_step(self, batch: Tuple[torch.Tensor, torch.Tensor], * args) -> dict:
-        X, y = batch
-        memories = self.encoder(X)  # (N, L) -> (N, L, H)
+        x, y = batch
+        memories = self.encoder(x)  # (N, L) -> (N, L, H)
         last = memories[:, -1]  # (N, L, H) -> (N, H)
         logits = self.classifier(last)  # (N, H) -> (N, C)
         return {
