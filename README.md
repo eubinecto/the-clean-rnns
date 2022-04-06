@@ -21,7 +21,7 @@ wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RN
   - [ ] `run_tune.py` (하이퍼파라미터 튜닝)
 ### 3️⃣ 지저분한 노트북 튜토리얼보단 구조가 잡힌 자연어처리 프로젝트의 템플릿을 찾고 있다!
 
-객체지향, 함수지향 프로그래밍을 적재적소에 적용하여 `cleanrnns` 패키지를 정리해뒀어요 👍
+객체지향, 함수지향 프로그래밍을 적재적소에 활용하여 `cleanrnns` 패키지를 정리해뒀어요 👍
   - `datamodules.py` (객체지향 - 학습에 사용할 데이터셋을 `pl.LightningDataModule`객체로 추상화)
   - `datasets.py` (객체지향 - 풀고자하는 문제에 따른 데이터의 형식을 `torch.utils.data.Dataset`객체로 추상화)
   - `fetchers.py` (함수지향 - 데이터를 로드 및 다운로드하는 로직을 함수로 정의)
