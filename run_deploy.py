@@ -21,8 +21,8 @@ def main():
     text = st.text_input("문장을 입력하세요", value="이 영화 너무 재미있어요! ㅎㅎ")
     if st.button(label="분석하기"):
         with st.spinner("Please wait..."):
-            st.text("RNN: " + str(rnn(text)))
-            st.text("LSTM: " + str(lstm(text)))
+            st.text("RNN:" + str(rnn(text)))
+            st.text("LSTM:" + str(lstm(text)))
 
 
 if __name__ == '__main__':
