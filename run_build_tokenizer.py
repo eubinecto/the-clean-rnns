@@ -6,9 +6,9 @@ https://huggingface.co/docs/tokenizers/python/latest/pipeline.html
 https://huggingface.co/docs/tokenizers/python/latest/components.html
 """
 import os
+from itertools import chain
 import wandb
 import argparse
-from itertools import chain
 from tokenizers import pre_tokenizers, normalizers
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
@@ -36,19 +36,18 @@ def main():
     # --- pre & post processing --- #
     tokenizer.pre_tokenizer = pre_tokenizers.Sequence([Whitespace(), Digits(), Punctuation()])  # noqa
     tokenizer.normalizer = normalizers.Sequence([Lowercase()])  # noqa
-    # --- prepare the data --- #
-    nsmc = fetch_nsmc()
-    # chaining two generators;  https://stackoverflow.com/a/3211047
-    iterator = chain((example.text for example in nsmc.train),
-                     (example.text for example in nsmc.test))
-    # --- train the tokenizer --- #
-    tokenizer.train_from_iterator(iterator, trainer=trainer)
-    # --- then save it --- #
     with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
+        # --- prepare the data --- #
+        train, val, test = fetch_nsmc(config['entity'], run)
+        iterator = chain((row[0] for row in train.data),
+                         (row[0] for row in val.data),
+                         (row[0] for row in test.data))
+        # --- train the tokenizer --- #
+        tokenizer.train_from_iterator(iterator, trainer=trainer)
         # save to local, and then to wandb
         json_path = ROOT_DIR / "tokenizer.json"
         tokenizer.save(str(json_path), pretty=True)  # noqa
-        artifact = wandb.Artifact(name="tokenizer", type="other", metadata=config)
+        artifact = wandb.Artifact(name="tokenizer", type="other", metadata=config, description=config['desc'])
         artifact.add_file(str(json_path))
         run.log_artifact(artifact, aliases=["latest", config['ver']])
         os.remove(str(json_path))  # make sure you delete it after you are done with uploading it

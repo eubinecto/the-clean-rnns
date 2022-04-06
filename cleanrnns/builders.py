@@ -1,6 +1,6 @@
 import torch
 from abc import ABC
-from typing import List
+from typing import List, Tuple
 from Korpora.korpora import LabeledSentenceKorpusData
 from tokenizers import Tokenizer, Encoding
 
@@ -19,12 +19,11 @@ class InputsBuilder(TensorBuilder, ABC):
 
 class InputsForClassificationBuilder(InputsBuilder):
 
-    def __call__(self, split: LabeledSentenceKorpusData) -> torch.Tensor:
+    def __call__(self, text2label: List[Tuple[str, str]]) -> torch.Tensor:
         """
-        :param split:
         :return: X (N, L)
         """
-        texts = [example.text for example in split]
+        texts = [text for text, _ in text2label]
         pad_token = self.tokenizer.pad_token  # noqa
         self.tokenizer.enable_padding(pad_token=pad_token,
                                       pad_id=self.tokenizer.token_to_id(pad_token),  # noqa
@@ -37,13 +36,14 @@ class InputsForClassificationBuilder(InputsBuilder):
 
 class LabelsForClassificationBuilder(TensorBuilder):
 
-    def __call__(self, split: LabeledSentenceKorpusData) -> torch.Tensor:
+    def __call__(self, text2label: List[Tuple[str, str]]) -> torch.Tensor:
         """
-        :param split:
         :return: y (N,)
         """
-        labels = [example.label for example in split]
-        y = torch.IntTensor(labels)
+        y = torch.IntTensor([
+            label
+            for _, label in text2label
+        ])
         return y
 
 

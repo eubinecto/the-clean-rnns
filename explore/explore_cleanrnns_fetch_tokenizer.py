@@ -1,9 +1,9 @@
-from fetchers import fetch_tokenizer, fetch_config
+import shutil
+from fetchers import fetch_tokenizer
 
 
 def main():
-    config = fetch_config()
-    tokenizer = fetch_tokenizer(entity="eubinecto", ver=config['tokenizer']['ver'])
+    tokenizer = fetch_tokenizer(entity="eubinecto")
     # retrieve the registered special tokens
     print(tokenizer.pad_token)  # noqa
     print(tokenizer.token_to_id(tokenizer.pad_token))  # noqa
@@ -13,6 +13,7 @@ def main():
     print(tokenizer.token_to_id(tokenizer.bos_token))  # noqa
     print(tokenizer.eos_token)  # noqa
     print(tokenizer.token_to_id(tokenizer.eos_token))  # noqa
+    shutil.rmtree("artifacts")  # clear the cache after testing
 
 
 if __name__ == '__main__':

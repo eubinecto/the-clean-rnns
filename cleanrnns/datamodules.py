@@ -3,10 +3,9 @@
 일단 시작은.. Naver Sentiment Movie Corpus로!
 나중에 시간이 남는다면, 다른 말뭉치 지원도 생각해보자.
 """
-from typing import Optional
+from typing import Optional, Tuple
 import pytorch_lightning as pl
-from Korpora import NSMCKorpus
-from Korpora.korpora import LabeledSentenceKorpusData
+import wandb
 from tokenizers import Tokenizer
 from torch.utils.data import DataLoader, random_split
 from wandb.sdk.wandb_run import Run
@@ -28,7 +27,7 @@ class NSMC(pl.LightningDataModule):
         self.tokenizer = tokenizer
         self.run = run
         # --- to be downloaded & built --- #
-        self.nsmc: Optional[NSMCKorpus] = None
+        self.nsmc: Optional[Tuple[wandb.Table, wandb.Table]] = None
         self.train: Optional[DatasetForClassification] = None
         self.val: Optional[DatasetForClassification] = None
         self.test: Optional[DatasetForClassification] = None
@@ -37,23 +36,20 @@ class NSMC(pl.LightningDataModule):
         """
         prepare: download all data needed for this from wandb to local.
         """
-        self.nsmc = fetch_nsmc()
+        self.nsmc = fetch_nsmc(self.config['entity'], run=self.run)
 
     def setup(self, stage: Optional[str] = None):
         if stage == "fit" or stage is None:
-            train = self.build_dataset(self.nsmc.train)
-            val_size = int(len(train) * self.config['val_ratio'])
-            train_size = len(train) - val_size
-            self.train, self.val = random_split(train, [train_size, val_size])
+            self.train = self.build_dataset(self.nsmc[0])
+            self.val = self.build_dataset(self.nsmc[1])
         elif stage == "test" or stage is None:
-            self.test = self.build_dataset(self.nsmc.test)
+            self.test = self.build_dataset(self.nsmc[2])
         else:
             raise NotImplementedError
 
-    def build_dataset(self, split: LabeledSentenceKorpusData) -> DatasetForClassification:
-        X = InputsForClassificationBuilder(self.tokenizer, self.config['max_length'])(split)  # (N, L)
-        y = LabelsForClassificationBuilder()(split)  # (N, L)
-        # to save gpu memory
+    def build_dataset(self, table: wandb.Table) -> DatasetForClassification:
+        X = InputsForClassificationBuilder(self.tokenizer, self.config['max_length'])(table.data)  # (N, L)
+        y = LabelsForClassificationBuilder()(table.data)  # (N, L)
         return DatasetForClassification(X, y)  # noqa
 
     def train_dataloader(self) -> DataLoader:

@@ -1,7 +1,10 @@
+import shutil
 
 
 def main():
-    pass
+
+    ...
+    shutil.rmtree("artifacts")  # clear the cache after testing
 
 
 if __name__ == '__main__':

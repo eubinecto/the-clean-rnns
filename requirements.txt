@@ -3,3 +3,4 @@ korpora==0.2.0
 pyaml==21.10.1
 wandb==0.12.12
 tokenizers==0.11.6
+pandas==1.4.2
