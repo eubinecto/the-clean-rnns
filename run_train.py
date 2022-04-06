@@ -19,13 +19,10 @@ def main():
     parser.add_argument("--num_workers", type=int, default=os.cpu_count())
     parser.add_argument("--log_every_n_steps", type=int, default=1)
     parser.add_argument("--fast_dev_run", action="store_true", default=False)
-    parser.add_argument("--upload", dest='upload', action='store_true', default=False)
     args = parser.parse_args()
     # prepare the datamodule
     config = fetch_config()[args.model]
     config.update(vars(args))
-    if not config['upload']:
-        print(colored("WARNING: YOU CHOSE NOT TO UPLOAD. NOTHING BUT LOGS WILL BE SAVED TO WANDB", color="red"))
     with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
         # --- prepare a pre-trained tokenizer & a module to train --- #
         if config['model'] == "rnn_for_classification":
