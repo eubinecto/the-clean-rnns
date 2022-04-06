@@ -15,9 +15,9 @@ class ClassificationBase(pl.LightningModule):
 
     def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor], *args) -> dict:
         X, y = batch
-        H_all = self.encoder(X)  # (N, L) -> (N, L, H)
-        H_last = H_all[:, -1]  # (N, L, H) -> (N, H)
-        logits = self.classifier(H_last)  # (N, H) -> (N, C)
+        memories = self.encoder(X)  # (N, L) -> (N, L, H)
+        last = memories[:, -1]  # (N, L, H) -> (N, H)
+        logits = self.classifier(last)  # (N, H) -> (N, C)
         loss = F.cross_entropy(logits, y).sum()  # (N, C), (N,) -> (N,) -> (,)
         return {
             "logits": logits.detach(),
@@ -49,6 +49,24 @@ class ClassificationBase(pl.LightningModule):
         accuracy = mF.accuracy(preds=logits, target=y)
         self.log("Validation/f1_score", f1_score)
         self.log("Validation/accuracy", accuracy)
+
+    def test_step(self, batch: Tuple[torch.Tensor, torch.Tensor], * args) -> dict:
+        X, y = batch
+        memories = self.encoder(X)  # (N, L) -> (N, L, H)
+        last = memories[:, -1]  # (N, L, H) -> (N, H)
+        logits = self.classifier(last)  # (N, H) -> (N, C)
+        return {
+            "logits": logits.detach(),
+            "y": y.detach(),
+        }
+
+    def test_epoch_end(self, outputs: List[dict]):
+        logits = torch.concat([out['logits'] for out in outputs], dim=0)  # noqa, num_batches * (N, C) -> (num_batches * N, C)
+        y = torch.concat([out['y'] for out in outputs], dim=0)  # num_batches * (N,) -> (num_batches * N,)
+        f1_score = mF.f1_score(preds=logits, target=y)
+        accuracy = mF.accuracy(preds=logits, target=y)
+        self.log("Test/f1_score", f1_score)
+        self.log("Test/accuracy", accuracy)
 
     def configure_optimizers(self) -> torch.optim.Optimizer:
         """

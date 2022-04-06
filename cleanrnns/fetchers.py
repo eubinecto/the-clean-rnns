@@ -45,4 +45,12 @@ def fetch_nsmc(entity: str, run: Run = None) -> Tuple[wandb.Table, wandb.Table, 
 
 
 def fetch_rnn_for_classification(entity: str, run: Run = None) -> RNNForClassification:
-    pass
+    ver = fetch_config()['rnn_for_classification']['ver']
+    if run:
+        artifact = run.use_artifact(f"nsmc:{ver}", type="model")
+    else:
+        artifact = wandb.Api().artifact(f"{entity}/the-clean-rnns/rnn_for_classification:{ver}", type="model")
+    artifact_path = artifact.download()
+    ckpt_path = os.path.join(artifact_path, "model.ckpt")
+    model = RNNForClassification.load_from_checkpoint(ckpt_path)
+    return model
