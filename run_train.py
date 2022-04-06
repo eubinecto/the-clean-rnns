@@ -51,8 +51,8 @@ def main():
                              logger=logger)
         # start training
         trainer.fit(model=model, datamodule=datamodule)
-        # upload the model to wandb only if the training is properly done  #
-        if not config['fast_dev_run'] and trainer.current_epoch == config['max_epochs'] - 1:
+        # upload the model to wandb only if the training is properly done
+        if not config['fast_dev_run'] and not trainer.interrupted:
             ckpt_path = ROOT_DIR / "model.ckpt"
             trainer.save_checkpoint(str(ckpt_path))
             artifact = wandb.Artifact(name=config['model'], type="model", metadata=config)
