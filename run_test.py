@@ -24,7 +24,7 @@ def main():
     with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
         # --- prepare a pre-trained tokenizer & a module to train --- #
         tokenizer = fetch_tokenizer(config['entity'], run)
-        model = fetch_model_for_classification(config['entity'], config['model'])
+        model = fetch_model_for_classification(config['entity'], config['model'], run)
         datamodule = NSMC(config, tokenizer, run)
         logger = WandbLogger(log_model=False)
         trainer = pl.Trainer(fast_dev_run=config['fast_dev_run'],
