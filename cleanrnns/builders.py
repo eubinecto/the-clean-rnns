@@ -19,7 +19,7 @@ class InputsBuilder(TensorBuilder, ABC):
 
 class InputsForClassificationBuilder(InputsBuilder):
 
-    def __call__(self, text2label: List[Tuple[str, str]]) -> torch.Tensor:
+    def __call__(self, text2label: List[Tuple[str, int]]) -> torch.Tensor:
         """
         :return: X (N, L)
         """
@@ -36,11 +36,11 @@ class InputsForClassificationBuilder(InputsBuilder):
 
 class LabelsForClassificationBuilder(TensorBuilder):
 
-    def __call__(self, text2label: List[Tuple[str, str]]) -> torch.Tensor:
+    def __call__(self, text2label: List[Tuple[str, int]]) -> torch.Tensor:
         """
         :return: y (N,)
         """
-        y = torch.IntTensor([
+        y = torch.LongTensor([
             label
             for _, label in text2label
         ])
@@ -48,13 +48,13 @@ class LabelsForClassificationBuilder(TensorBuilder):
 
 
 # --- to be implemented --- #
-class InputsForConditionalGenerationBuilder(InputsBuilder):
+class InputsForSeq2SeqBuilder(InputsBuilder):
 
     def __call__(self, *args, **kwargs) -> torch.Tensor:
         raise NotImplementedError
 
 
-class LabelsForConditionalGenerationBuilder(TensorBuilder):
+class LabelsForSeq2SeqBuilder(TensorBuilder):
     def __call__(self, *args, **kwargs) -> torch.Tensor:
         raise NotImplementedError
 

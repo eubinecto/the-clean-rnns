@@ -4,8 +4,8 @@ import wandb
 from typing import Tuple
 from tokenizers import Tokenizer
 from wandb.sdk.wandb_run import Run
-from models import RNN
-from paths import CONFIG_YAML
+from cleanrnns.models import RNNForClassification
+from cleanrnns.paths import CONFIG_YAML
 
 
 # --- fetching from local --- #
@@ -44,5 +44,5 @@ def fetch_nsmc(entity: str, run: Run = None) -> Tuple[wandb.Table, wandb.Table, 
     return train, val, test  # noqa
 
 
-def fetch_rnn(entity: str, ver: str, run: Run = None) -> RNN:
+def fetch_rnn_for_classification(entity: str, run: Run = None) -> RNNForClassification:
     pass

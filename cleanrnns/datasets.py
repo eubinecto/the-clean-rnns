@@ -23,7 +23,7 @@ class DatasetForClassification(Dataset):
         return self.X[index], self.y[index]
 
 
-class DatasetForConditionalGeneration(Dataset):
+class DatasetForSeq2Seq(Dataset):
     """
     🚧 to be added later 🚧
     Q & A, language modeling, 번역 등.
