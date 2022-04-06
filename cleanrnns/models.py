@@ -1,6 +1,7 @@
+import torch
 import pytorch_lightning as pl
 from typing import Union, Tuple, List
-import torch
+from tqdm import tqdm
 from torch.nn import functional as F
 from torchmetrics import functional as mF
 from cleanrnns.rnns import RNN, LSTM, BiLSTM, BiLSTMSearch
@@ -23,6 +24,13 @@ class ClassificationBase(pl.LightningModule):
         logits = self.classifier(last)  # (N, H) -> (N, C)
         probs = torch.softmax(logits, dim=-1)  # (N, C) -> (N, C) (normalised over C)
         return probs
+
+    def on_train_start(self):
+        # deep models should be initialised with so-called "Xavier initialisation"
+        # refer to: https://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf
+        for param in tqdm(self.parameters(), desc="initialising weights..."):
+            if param.dim() > 1:
+                torch.nn.init.xavier_uniform_(param)
 
     def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor], *args) -> dict:
         x, y = batch
