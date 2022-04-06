@@ -60,9 +60,9 @@ def fetch_model_for_classification(entity: str, name: str, run: Run = None) -> C
         model = RNNForClassification.load_from_checkpoint(ckpt_path)
     elif name == "lstm_for_classification":
         model = LSTMForClassification.load_from_checkpoint(ckpt_path)
-    elif name == "lstm_for_classification":
+    elif name == "bilstm_for_classification":
         model = BiLSTMForClassification.load_from_checkpoint(ckpt_path)
-    elif name == "lstm_for_classification":
+    elif name == "bilstmsearch_for_classification":
         model = BiLSTMSearchForClassification.load_from_checkpoint(ckpt_path)
     else:
         raise ValueError
