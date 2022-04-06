@@ -13,6 +13,7 @@ def main():
     print(tokenizer.token_to_id(tokenizer.bos_token))  # noqa
     print(tokenizer.eos_token)  # noqa
     print(tokenizer.token_to_id(tokenizer.eos_token))  # noqa
+    print(tokenizer.get_vocab_size())  # vocab size?
     shutil.rmtree("artifacts")  # clear the cache after testing
 
 

@@ -9,7 +9,7 @@ import wandb
 from tokenizers import Tokenizer
 from torch.utils.data import DataLoader, random_split
 from wandb.sdk.wandb_run import Run
-from builders import InputsForClassificationBuilder, LabelsForClassificationBuilder
+from cleanrnns.builders import InputsForClassificationBuilder, LabelsForClassificationBuilder
 from cleanrnns.fetchers import fetch_nsmc
 from cleanrnns.datasets import DatasetForClassification
 

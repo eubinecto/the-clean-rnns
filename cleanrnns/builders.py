@@ -40,7 +40,7 @@ class LabelsForClassificationBuilder(TensorBuilder):
         """
         :return: y (N,)
         """
-        y = torch.IntTensor([
+        y = torch.LongTensor([
             label
             for _, label in text2label
         ])

@@ -4,9 +4,8 @@ import wandb
 from typing import Tuple
 from tokenizers import Tokenizer
 from wandb.sdk.wandb_run import Run
-from models import RNN
-from modules import RNNForClassification
-from paths import CONFIG_YAML
+from cleanrnns.models import RNNForClassification
+from cleanrnns.paths import CONFIG_YAML
 
 
 # --- fetching from local --- #

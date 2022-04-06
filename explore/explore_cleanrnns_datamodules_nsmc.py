@@ -2,7 +2,6 @@ import os
 import shutil
 from cleanrnns.datamodules import NSMC
 from fetchers import fetch_config, fetch_tokenizer
-
 os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 
 

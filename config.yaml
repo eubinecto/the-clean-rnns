@@ -1,12 +1,12 @@
 nsmc:
   ver: with-val
-  desc: Naver Sentiment Movie Corpus. Validation set is added. Still, no preprocessing is done.
+  desc: Naver Sentiment Movie Corpus. Validation set is added. Still, no preprocessing is done. Number of classes are added.
   val_ratio: 0.2
-  seed: 1004  
+  seed: 1004
 
 tokenizer:
   ver: bpe-nsmc-with-val
-  desc: "A BPE tokenizer, trained on nsmc:with-val"
+  desc: "A BPE tokenizer, trained on nsmc:with-val-1"
   # the symbols to use for special tokens
   pad: <pad>
   unk: <unk>
@@ -18,10 +18,12 @@ tokenizer:
 rnn_for_classification:
   ver: cls-nsmc-with-val-overfit
   desc: "A baseline sentiment classifier (hence the `cls` prefix) . over-fitted to nsmc:with-val."
-  batch_size: 64
-  shuffle: 1
   max_epochs: 100
+  batch_size: 64
+  max_length: 100
+  hidden_size: 128
+  depth: 1
+  shuffle: 1
   lr: 0.0001
   datamodule: nsmc
-  max_length: 150
   num_classes: 2
