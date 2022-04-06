@@ -4,11 +4,15 @@ import wandb
 from typing import Tuple
 from tokenizers import Tokenizer
 from wandb.sdk.wandb_run import Run
-from cleanrnns.models import RNNForClassification
+from cleanrnns.models import RNNForClassification, ClassificationBase, LSTMForClassification, BiLSTMForClassification, \
+    BiLSTMSearchForClassification
 from cleanrnns.paths import CONFIG_YAML
+from cleanrnns.pipelines import PipelineForClassification
 
 
 # --- fetching from local --- #
+
+
 def fetch_config() -> dict:
     with open(str(CONFIG_YAML), 'r', encoding="utf-8") as fh:
         return yaml.safe_load(fh)
@@ -44,5 +48,46 @@ def fetch_nsmc(entity: str, run: Run = None) -> Tuple[wandb.Table, wandb.Table, 
     return train, val, test  # noqa
 
 
-def fetch_rnn_for_classification(entity: str, run: Run = None) -> RNNForClassification:
-    pass
+def fetch_model_for_classification(entity: str, name: str, run: Run = None) -> ClassificationBase:
+    ver = fetch_config()[name]['ver']
+    if run:
+        artifact = run.use_artifact(f"{name}:{ver}", type="model")
+    else:
+        artifact = wandb.Api().artifact(f"{entity}/the-clean-rnns/{name}:{ver}", type="model")
+    artifact_path = artifact.download()
+    ckpt_path = os.path.join(artifact_path, "model.ckpt")
+    if name == "rnn_for_classification":
+        model = RNNForClassification.load_from_checkpoint(ckpt_path)
+    elif name == "lstm_for_classification":
+        model = LSTMForClassification.load_from_checkpoint(ckpt_path)
+    elif name == "lstm_for_classification":
+        model = BiLSTMForClassification.load_from_checkpoint(ckpt_path)
+    elif name == "lstm_for_classification":
+        model = BiLSTMSearchForClassification.load_from_checkpoint(ckpt_path)
+    else:
+        raise ValueError
+    return model
+
+
+def fetch_model_for_seq2seq():
+    raise NotImplementedError
+
+
+def fetch_model_for_ner():
+    raise NotImplementedError
+
+
+def fetch_pipeline_for_classification(entity: str, name: str, run: Run = None) -> PipelineForClassification:
+    model = fetch_model_for_classification(entity, name, run)
+    tokenizer = fetch_tokenizer(entity, run)
+    config = fetch_config()[name]
+    pipeline = PipelineForClassification(model, tokenizer, config)
+    return pipeline
+
+
+def fetch_pipeline_for_seq2seq(entity: str, name: str, run: Run = None):
+    raise NotImplementedError
+
+
+def fetch_pipeline_for_ner(entity: str, name: str, run: Run = None):
+    raise NotImplementedError

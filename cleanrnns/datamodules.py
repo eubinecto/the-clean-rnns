@@ -7,9 +7,9 @@ from typing import Optional, Tuple
 import pytorch_lightning as pl
 import wandb
 from tokenizers import Tokenizer
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader
 from wandb.sdk.wandb_run import Run
-from cleanrnns.builders import InputsForClassificationBuilder, LabelsForClassificationBuilder
+from cleanrnns import tensors as T
 from cleanrnns.fetchers import fetch_nsmc
 from cleanrnns.datasets import DatasetForClassification
 
@@ -48,9 +48,9 @@ class NSMC(pl.LightningDataModule):
             raise NotImplementedError
 
     def build_dataset(self, table: wandb.Table) -> DatasetForClassification:
-        X = InputsForClassificationBuilder(self.tokenizer, self.config['max_length'])(table.data)  # (N, L)
-        y = LabelsForClassificationBuilder()(table.data)  # (N, L)
-        return DatasetForClassification(X, y)  # noqa
+        x = T.inputs_for_classification(table.data, self.config['max_length'], self.tokenizer)  # (N, L)
+        y = T.labels_for_classification(table.data)  # (N, L)
+        return DatasetForClassification(x, y)  # noqa
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(self.train, batch_size=self.config['batch_size'],

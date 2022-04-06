@@ -13,11 +13,21 @@ class ClassificationBase(pl.LightningModule):
         self.encoder = encoder
         self.classifier = torch.nn.Linear(self.hparams['hidden_size'], num_classes)
 
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        memories = self.encoder(x)  # (N, L) -> (N, L, H)
+        last = memories[:, -1]  # (N, L, H) -> (N, H)
+        return last
+
+    def predict(self, x: torch.Tensor) -> torch.Tensor:
+        last = self.forward(x)  # (N, L) -> (N, H)
+        logits = self.classifier(last)  # (N, H) -> (N, C)
+        probs = torch.softmax(logits, dim=-1)  # (N, C) -> (N, C) (normalised over C)
+        return probs
+
     def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor], *args) -> dict:
-        X, y = batch
-        H_all = self.encoder(X)  # (N, L) -> (N, L, H)
-        H_last = H_all[:, -1]  # (N, L, H) -> (N, H)
-        logits = self.classifier(H_last)  # (N, H) -> (N, C)
+        x, y = batch
+        last = self.forward(x)  # (N, L) -> (N, H)
+        logits = self.classifier(last)  # (N, H) -> (N, C)
         loss = F.cross_entropy(logits, y).sum()  # (N, C), (N,) -> (N,) -> (,)
         return {
             "logits": logits.detach(),
@@ -49,6 +59,24 @@ class ClassificationBase(pl.LightningModule):
         accuracy = mF.accuracy(preds=logits, target=y)
         self.log("Validation/f1_score", f1_score)
         self.log("Validation/accuracy", accuracy)
+
+    def test_step(self, batch: Tuple[torch.Tensor, torch.Tensor], * args) -> dict:
+        x, y = batch
+        memories = self.encoder(x)  # (N, L) -> (N, L, H)
+        last = memories[:, -1]  # (N, L, H) -> (N, H)
+        logits = self.classifier(last)  # (N, H) -> (N, C)
+        return {
+            "logits": logits.detach(),
+            "y": y.detach(),
+        }
+
+    def test_epoch_end(self, outputs: List[dict]):
+        logits = torch.concat([out['logits'] for out in outputs], dim=0)  # noqa, num_batches * (N, C) -> (num_batches * N, C)
+        y = torch.concat([out['y'] for out in outputs], dim=0)  # num_batches * (N,) -> (num_batches * N,)
+        f1_score = mF.f1_score(preds=logits, target=y)
+        accuracy = mF.accuracy(preds=logits, target=y)
+        self.log("Test/f1_score", f1_score)
+        self.log("Test/accuracy", accuracy)
 
     def configure_optimizers(self) -> torch.optim.Optimizer:
         """
