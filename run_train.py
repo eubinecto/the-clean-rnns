@@ -26,19 +26,21 @@ def main():
     if not config['upload']:
         print(colored("WARNING: YOU CHOSE NOT TO UPLOAD. NOTHING BUT LOGS WILL BE SAVED TO WANDB", color="red"))
     with wandb.init(entity=config['entity'], project="the-clean-rnns", config=vars(args)) as run:
-        # prepare a pre-trained tokenizer & a module to train
+        # --- prepare a pre-trained tokenizer & a module to train --- #
         if config['model'] == "rnn_for_classification":
             config.update(fetch_config()[config['model']])
             tokenizer = fetch_tokenizer(config['entity'], run)
             model = RNNForClassification(tokenizer.get_vocab_size(), config['hidden_size'],
                                          config['num_classes'], config['lr'], config['depth'])
-        else:
-            raise NotImplementedError
-        # prepare a datamodule to train the module with
-        if config['datamodule'] == "nsmc":
             datamodule = NSMC(config, tokenizer, run)
-        else:
+        elif config['model'] == "lstm_for_classification":
             raise NotImplementedError
+        elif config['model'] == "bilstm_for_classification":
+            raise NotImplementedError
+        elif config['model'] == "bilstmsearch_for_classification":
+            raise NotImplementedError
+        else:
+            raise ValueError
         logger = WandbLogger(log_model=False)
         trainer = pl.Trainer(max_epochs=config['max_epochs'],
                              fast_dev_run=config['fast_dev_run'],
@@ -51,12 +53,12 @@ def main():
         trainer.fit(model=model, datamodule=datamodule)
         # upload the model to wandb only if the training is properly done  #
         if not config['fast_dev_run'] and trainer.current_epoch == config['max_epochs'] - 1:
-            ckpt_path = ROOT_DIR / "module.ckpt"
+            ckpt_path = ROOT_DIR / "model.ckpt"
             trainer.save_checkpoint(str(ckpt_path))
             artifact = wandb.Artifact(name=config['model'], type="model", metadata=config)
             artifact.add_file(str(ckpt_path))
             run.log_artifact(artifact, aliases=["latest", config['ver']])
-            os.remove(str(ckpt_path))  # make sure you remove it after you are done with uploading it
+            os.remove(str(ckpt_path))
 
 
 if __name__ == '__main__':
