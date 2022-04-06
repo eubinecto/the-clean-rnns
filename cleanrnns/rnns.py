@@ -4,40 +4,11 @@ A simple implementation of the RNN family - RNN, LSTM, BiLSTM, BiLSTMSearch.
 import torch
 
 
-class RNNCell(torch.nn.Module):
-    def __init__(self, hidden_size: int):
-        super().__init__()
-        self.W_hh = torch.nn.Linear(in_features=hidden_size, out_features=hidden_size)
-        self.W_xh = torch.nn.Linear(in_features=hidden_size, out_features=hidden_size)
-        self.register_buffer("dummy", torch.zeros(hidden_size))
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        h_t = f_W(h_t-1(past), x_t(now))
-        h_t = tanh(W_hh * h_t-1 + W_xh * x_t)
-        :param x - (N, L, H)
-        :return: memories - (N, L, H)
-        """
-        N, L, _ = x.shape
-        memories = list()
-        past = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
-        for time in range(L):
-            now = x[:, time]  # (N, L) -> (N, 1) -> (N, H)
-            past = torch.tanh(self.W_hh(past) + self.W_xh(now))  # ... -> (N, H)
-            memories.append(past)
-        return torch.stack(memories, dim=1)  # ... -> (N, L, H)
-
-
-class RNN(torch.nn.Module):
-    """
-    A vanilla  multi-layer RNN.
-    Complexity - O(L * D)
-    https://medium.com/ecovisioneth/building-deep-multi-layer-recurrent-neural-networks-with-star-cell-2f01acdb73a7
-    """
-    def __init__(self, vocab_size: int, hidden_size: int, depth: int):
+class RNNFamily(torch.nn.Module):
+    def __init__(self, vocab_size: int, hidden_size: int, cells: torch.nn.ModuleList):
         super().__init__()
         self.embeddings = torch.nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_size)
-        self.cells = torch.nn.ModuleList([RNNCell(hidden_size) for _ in range(depth)])
+        self.cells = cells
 
     def forward(self, x: torch.Tensor):
         """
@@ -50,21 +21,91 @@ class RNN(torch.nn.Module):
         return x
 
 
-class LSTM(torch.nn.Module):
+class RNNCell(torch.nn.Module):
+    def __init__(self, hidden_size: int):
+        super().__init__()
+        self.W_hh = torch.nn.Linear(in_features=hidden_size, out_features=hidden_size)
+        self.W_xh = torch.nn.Linear(in_features=hidden_size, out_features=hidden_size)
+        self.register_buffer("dummy", torch.zeros(hidden_size))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        h_t = f_W(h_t-1(short), x_t(now))
+        h_t = tanh(W_hh * h_t-1 + W_xh * x_t)
+        :param x - (N, L, H)
+        :return: memories - (N, L, H)
+        """
+        N, L, _ = x.shape
+        memories = list()
+        short = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
+        for time in range(L):
+            now = x[:, time]  # (N, L) -> (N, 1) -> (N, H)
+            short = torch.tanh(self.W_hh(short) + self.W_xh(now))  # ... -> (N, H)
+            memories.append(short)
+        return torch.stack(memories, dim=1)  # ... -> (N, L, H)
+
+
+class RNN(RNNFamily):
+    """
+    A vanilla  multi-layer RNN.
+    Complexity - O(L * D)
+    https://medium.com/ecovisioneth/building-deep-multi-layer-recurrent-neural-networks-with-star-cell-2f01acdb73a7
+    """
+    def __init__(self, vocab_size: int, hidden_size: int, depth: int):
+        super().__init__(vocab_size, hidden_size,
+                         cells=torch.nn.ModuleList([RNNCell(hidden_size) for _ in range(depth)]))
+
+
+class LSTMCell(torch.nn.Module):
+    def __init__(self, hidden_size: int):
+        super().__init__()
+        self.W_f = torch.nn.Linear(in_features=hidden_size*2, out_features=hidden_size)
+        self.W_i = torch.nn.Linear(in_features=hidden_size*2, out_features=hidden_size)
+        self.W_o = torch.nn.Linear(in_features=hidden_size*2, out_features=hidden_size)
+        self.W_h = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
+        self.register_buffer("dummy", torch.zeros(hidden_size))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        :param x - (N, L, H)
+        :return: memories (N, L, H)
+        """
+        N, L, _ = x.shape
+        memories = list()
+        long = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
+        short = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
+        for time in range(L):
+            now = x[:, time]  # (N, L, H) -> (N, H)
+            short_cat_now = torch.concat([short, now], dim=-1)  # (N, H), (N, H) -> (N, H * 2)
+            f = torch.sigmoid(self.W_f(short_cat_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
+            i = torch.sigmoid(self.W_i(short_cat_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
+            o = torch.sigmoid(self.W_o(short_cat_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
+            h = self.W_h(short_cat_now)  # (N, H * 2) * (H * 2, H) -> (N, H)
+            # forget parts of long-term memory, while adding parts of short-term memory to long-term memory
+            long = torch.mul(f, long) + torch.mul(i, h)  # (N, H) + (N, H) -> (N, H)
+            # generate short-term memory from parts of long-term memory
+            short = torch.mul(o, torch.tanh(long))   # (N, H) + (N, H) -> (N, H)
+            memories.append(short)
+        return torch.stack(memories, dim=1)  # ... -> (N, L, H)
+
+
+class LSTM(RNNFamily):
+    """
+    A simple, multi-layer LSTM.
+    """
+    def __init__(self, vocab_size: int, hidden_size: int, depth: int):
+        super().__init__(vocab_size, hidden_size,
+                         cells=torch.nn.ModuleList([LSTMCell(hidden_size) for _ in range(depth)]))
+
+
+class BiLSTM(RNNFamily):
     """
     🚧 공사중 🚧
     """
     pass
 
 
-class BiLSTM(torch.nn.Module):
-    """
-    🚧 공사중 🚧
-    """
-    pass
-
-
-class BiLSTMSearch(torch.nn.Module):
+class BiLSTMSearch(RNNFamily):
     """
     🚧 공사중 🚧
     """
