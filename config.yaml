@@ -1,6 +1,11 @@
+nsmc:
+  ver: raw
+  desc: Naver Sentiment Movie Corpus. This is the raw version of the corpus. No pre-processing has been done.
+
+
 tokenizer:
-  ver: tokenizer-bpe-0
-  desc: A BPE tokenizer.
+  ver: bpe-nsmc-raw
+  desc: "A BPE tokenizer, trained on nsmc:raw"
   # the symbols to use for special tokens
   pad: <pad>
   unk: <unk>
@@ -10,7 +15,7 @@ tokenizer:
 
 
 rnn:
-  ver: rnn-cls-nsmc-0
+  ver: cls-nsmc-overfit
   desc: A baseline model. overfitted to the training set.
   batch_size: 64
   shuffle: 1

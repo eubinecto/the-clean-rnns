@@ -1,6 +1,5 @@
-from typing import Tuple
-
 import torch
+from typing import Tuple
 from torch.utils.data import Dataset
 
 
