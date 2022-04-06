@@ -4,5 +4,4 @@ pyaml==21.10.1
 wandb==0.12.12
 tokenizers==0.11.6
 pandas==1.4.2
-termcolor==1.1.0
 streamlit==1.8.1

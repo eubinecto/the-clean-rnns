@@ -18,7 +18,7 @@ tokenizer:
 rnn_for_classification:
   ver: cls-nsmc-with-val-overfit
   desc: "A baseline sentiment classifier (hence the `cls` prefix). It is over-fitted to nsmc:with-val."
-  max_epochs: 5
+  max_epochs: 3
   batch_size: 1024
   max_length: 150
   hidden_size: 512
