@@ -2,7 +2,7 @@ import argparse
 import pandas as pd
 import wandb
 from Korpora import Korpora, NSMCKorpus
-from fetchers import fetch_config
+from cleanrnns.fetchers import fetch_config
 from cleanrnns.preprocess import cleanse, stratified_split
 
 
@@ -19,7 +19,7 @@ def main():
     # preprocessing
     test_df = test_df.pipe(cleanse)
     # we construct a validation set here
-    train_df, val_df = train_df.pipe(cleanse)\
+    val_df, train_df = train_df.pipe(cleanse)\
                                .pipe(stratified_split, ratio=config['val_ratio'], seed=config['seed'])
     train = wandb.Table(data=train_df)
     val = wandb.Table(data=val_df)
