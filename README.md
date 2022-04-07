@@ -7,7 +7,7 @@
 </p>
 
 
-wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RNN 패밀리 👨‍👩‍👧‍👦: RNN, LSTM, BiLSTM 그리고 BiLSTM with attention mechanism.
+wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RNN 👨‍👩‍👧‍👦: RNN, LSTM, BiLSTM 그리고 BiLSTM with attention mechanism.
 ## Who is this project for?
 ### 1️⃣ RNN 패밀리를 Pytorch로 밑바닥부터 구현해보고 싶다!
 `cleanrnns/rnns.py`에 깔끔하게 구현해뒀어요 😊 
