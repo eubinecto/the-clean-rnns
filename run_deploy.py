@@ -39,7 +39,7 @@ def main():
             pred, probs = bilstm(text)
             sentiment = "🟢(긍정)" if pred else "🔴(부정)"
             probs = ["{:.4f}".format(prob) for prob in probs]
-            table.append(["RNN", sentiment, str(probs)])
+            table.append(["BiLSTM", sentiment, str(probs)])
             df = pd.DataFrame(table, columns=["모델", "예측", "확률분포 [부정, 긍정]"])
             st.markdown(df.to_markdown(index=False))
 
