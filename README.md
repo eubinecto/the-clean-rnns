@@ -1,6 +1,11 @@
-# The clean RNN's 
+# The Clean RNN's 
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/eubinecto/the-clean-rnns/main/run_deploy.py)
+
+<p align="center">
+  <img width="836" alt="image" src="https://user-images.githubusercontent.com/56193069/162101921-48ca93d2-787b-4eef-8a5b-00f31a3dba8c.png">
+</p>
+
 
 wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RNN 패밀리 👨‍👩‍👧‍👦: RNN, LSTM, BiLSTM 그리고 BiLSTM with attention mechanism.
 ## Who is this project for?
