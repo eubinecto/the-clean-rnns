@@ -76,6 +76,7 @@ def fetch_model_for_ner():
 
 def fetch_pipeline_for_classification(entity: str, name: str, run: Run = None) -> PipelineForClassification:
     model = fetch_model_for_classification(entity, name, run)
+    model.eval()
     tokenizer = fetch_tokenizer(entity, run)
     config = fetch_config()[name]
     pipeline = PipelineForClassification(model, tokenizer, config)
