@@ -43,15 +43,13 @@
 RNN  | 0.8411 | 16.4M | 18m 19s | 512 | 통일 | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/40ca3shv?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/20pfhypk/overview)
 LSTM |  0.8522 | 16.4M | 20m 18s | 443 | 통일 |  [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/3eilxpo4/overview) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/2vimv04k/overview) 
 BiLSTM | **0.8539** | 16.4M | **36m 12s** | 387 | 통일 |  [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/cyos30w7/artifacts) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/38zie0fu/overview)
+
+ 동일한 입력에 대한 예측값도 [웹 데모](https://share.streamlit.io/eubinecto/the-clean-rnns/main/run_deploy.py) 에서 한눈에 비교가 가능해요 |
+ --- | 
+  <img width="350" alt="image" src="https://user-images.githubusercontent.com/56193069/162197935-4eddc14d-8580-48f9-82ab-64e97d2f877f.png"> |
  
-동일한 입력에 대한 예측값도 [웹 데모](https://share.streamlit.io/eubinecto/the-clean-rnns/main/run_deploy.py)에서 비교가능 |
---- | 
-<img width="748" alt="image" src="https://user-images.githubusercontent.com/56193069/162099283-ccb7dc8a-4a27-4954-af18-07498c3c7389.png"> |
 
-  
 </details>
-
-
 
 ### 3️⃣ 데이터 구축부터 모델 배포까지 모든 과정을 구현해보고 싶다!
 단계별로 스크립트를 작성해뒀어요 🪜 
