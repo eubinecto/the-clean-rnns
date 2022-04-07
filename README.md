@@ -13,7 +13,7 @@
 
 
 ## Shortcuts
-[`RNNCell`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L24-L45) / [`RNN`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L48-L56) / [`LSTMCell`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L59-L89) / [`LSTM`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L92-L98)
+[`RNNCell`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L24-L45) / [`RNN`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L48-L56) / [`LSTMCell`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L59-L89) / [`LSTM`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L92-L98) / [`BiLSTMCell`](https://github.com/eubinecto/the-clean-rnns/blob/e718b0ae556702b3ca14e6b423afecd62a91f845/cleanrnns/rnns.py#L110-L122) /  [`BiLSTM`](https://github.com/eubinecto/the-clean-rnns/blob/e718b0ae556702b3ca14e6b423afecd62a91f845/cleanrnns/rnns.py#L125-L132)
 
 ## Who is this project for?
 ### 1️⃣ RNN 패밀리를 Pytorch로 밑바닥부터 구현해보고 싶다!
@@ -24,7 +24,8 @@
   
 - [X] `RNNCell`, `RNN`
 - [X] `LSTMCell`, `LSTM`
-- [ ]  🚧 `BiLSTMCell`, `BiLSTM` 🚧
+- [X] `BiLSTMCell`, `BiLSTM`
+- [ ]  🚧 `GRUCell`, `GRU` 🚧
   
 </details>
 
@@ -37,11 +38,12 @@
 <summary> 예를 들면? </summary>
   
 #### Naver Sentiment Movie Corpus 긍/부정 이진분류 성능 비교 
-모델 | f1 score (train) | f1 score (validation) | f1 score (test) | 하이퍼파라미터 | wandb 로그
---- |------------------|------------| --- |--------| ---
-RNN  | 0.8866           | 0.8457     | **0.8411** | 통제변인     | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/40ca3shv?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/20pfhypk/overview)
-LSTM | 0.9184           | 0.8567     | **0.8522** | 통제변인     | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/25wm1ome?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/25e9xjyz/overview) 
-
+모델  | f1 score (test) | 파라미터 | 소요시간 | `hidden_size` | 하이퍼파라미터 |  wandb 로그
+--- | --- |--------| --- | ---| --- | --- 
+RNN  | 0.8411 | 16.4M | 18m 19s | 512 | 통일 | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/40ca3shv?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/20pfhypk/overview)
+LSTM |  0.8522 | 16.4M | 20m 18s | 443 | 통일 |  [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/3eilxpo4/overview) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/2vimv04k/overview) 
+BiLSTM | **0.8539** | 16.4M | **36m 12s** | 387 | 통일 |  [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/cyos30w7/artifacts) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/38zie0fu/overview)
+ 
 동일한 문제에 대한 예측값도 [웹 데모](https://share.streamlit.io/eubinecto/the-clean-rnns/main/run_deploy.py)에서 비교가능 |
 --- | 
 <img width="748" alt="image" src="https://user-images.githubusercontent.com/56193069/162099283-ccb7dc8a-4a27-4954-af18-07498c3c7389.png"> |
