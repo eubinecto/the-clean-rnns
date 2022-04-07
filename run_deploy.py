@@ -2,6 +2,8 @@
 use streamlit to deploy them
 """
 from typing import Tuple
+
+import pandas as pd
 import streamlit as st
 from cleanrnns.fetchers import fetch_pipeline_for_classification
 from cleanrnns.pipelines import PipelineForClassification
@@ -18,11 +20,20 @@ def main():
     # fetch a pre-trained model
     rnn, lstm = cache_pipeline()
     st.title("The Clean Rnns - 긍 / 부정 감성분석")
-    text = st.text_input("문장을 입력하세요", value="이 영화 너무 재미있어요! ㅎㅎ")
+    text = st.text_input("문장을 입력하세요", value="난 너가 정말 좋으면서도 싫다")
     if st.button(label="분석하기"):
         with st.spinner("Please wait..."):
-            st.text("RNN:" + str(rnn(text)))
-            st.text("LSTM:" + str(lstm(text)))
+            # prediction with RNN
+            table = list()
+            pred, probs = rnn(text)
+            sentiment = "`긍정`" if pred else "`부정`"
+            table.append(["RNN", sentiment, str(probs)])
+            # prediction with LSTM
+            pred, probs = lstm(text)
+            sentiment = "`긍정`" if pred else "`부정`"
+            table.append(["LSTM", sentiment, str(probs)])
+            df = pd.DataFrame(table, columns=["모델", "예측", "확률분포"])
+            st.markdown(df.to_markdown(index=False))
 
 
 if __name__ == '__main__':
