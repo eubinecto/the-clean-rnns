@@ -7,7 +7,12 @@
 </p>
 
 
-wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RNN 👨‍👩‍👧‍👦: RNN, LSTM, BiLSTM 그리고 BiLSTM with attention mechanism.
+wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RNN 패밀리 👨‍👩‍👧‍👦
+
+
+## Shortcuts
+[`RNNCell`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L24-L45) / [`RNN`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L48-L56) / [`LSTMCell`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L59-L89) / [`LSTM`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L92-L98)
+
 ## Who is this project for?
 ### 1️⃣ RNN 패밀리를 Pytorch로 밑바닥부터 구현해보고 싶다!
 `cleanrnns/rnns.py`에 깔끔하게 구현해뒀어요 😊 
@@ -45,7 +50,7 @@ LSTM | 0.9184           | 0.8567     | **0.8522** | 통제변인     | [학습](
 
 
 
-### 2️⃣ 데이터 구축부터 모델 배포까지 모든 과정을 구현해보고 싶다!
+### 3️⃣ 데이터 구축부터 모델 배포까지 모든 과정을 구현해보고 싶다!
 단계별로 스크립트를 작성해뒀어요 🪜 
 
 <details>
@@ -61,7 +66,7 @@ LSTM | 0.9184           | 0.8567     | **0.8522** | 통제변인     | [학습](
 </details>
 
 
-### 3️⃣ 지저분한 노트북 튜토리얼보단 구조가 잡힌 자연어처리 프로젝트를 찾고있다!
+### 4️⃣ 지저분한 노트북 튜토리얼보단 구조가 잡힌 자연어처리 프로젝트를 찾고있다!
 
 객체지향, 함수지향 프로그래밍을 적재적소에 활용하여 `cleanrnns` 패키지를 정리해뒀어요 🧹 
 
