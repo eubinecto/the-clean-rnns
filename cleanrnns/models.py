@@ -7,7 +7,7 @@ from cleanrnns.rnns import RNN, LSTM, BiLSTM
 
 
 # --- lightning modules --- #
-class ClassificationBase(pl.LightningModule):
+class ClassificationBase(pl.LightningModule):  # lgtm [py/missing-call-to-init]
     def __init__(self, encoder: Union[RNN, LSTM, BiLSTM], num_classes: int):
         super().__init__()
         self.encoder = encoder
