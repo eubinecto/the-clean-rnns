@@ -5,3 +5,4 @@ wandb==0.12.12
 tokenizers==0.11.6
 pandas==1.4.2
 streamlit==1.8.1
+tabulate==0.8.9

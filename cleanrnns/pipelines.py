@@ -1,5 +1,5 @@
 import torch
-from typing import Tuple
+from typing import Tuple, List
 from tokenizers import Tokenizer
 from cleanrnns.models import ClassificationBase
 from cleanrnns import tensors as T
@@ -14,7 +14,7 @@ class PipelineForClassification:
         self.tokenizer = tokenizer
         self.config = config
 
-    def __call__(self, text: str) -> Tuple[int, float]:
+    def __call__(self, text: str) -> Tuple[int, List[float]]:
         # build the inputs
         x = T.inputs_for_classification(text2label=[(text, None)],
                                         max_length=self.config['max_length'],
@@ -22,8 +22,8 @@ class PipelineForClassification:
         probs = self.model.predict(x)  # (N, L) -> (N, C)
         preds = torch.argmax(probs, dim=-1)  # (N, C) -> (N,)
         label = int(preds.squeeze())
-        probability = float(probs.squeeze()[label])
-        return label, probability
+        probs = probs.squeeze().tolist()
+        return label, probs
 
 
 class PipelineForSeq2Seq:
