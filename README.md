@@ -8,7 +8,7 @@ wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RN
 ### 1️⃣ RNN 패밀리를 Pytorch로 밑바닥부터 구현해보고 싶다!
 `cleanrnns/rnns.py`에 구현해놨어요 👍 
   - [X] `RNNCell`, `RNN`
-  - [ ] `LSTMCell`, `LSTM`
+  - [X] `LSTMCell`, `LSTM`
   - [ ] `BiLSTMCell`, `BiLSTM`
   - [ ] `BiLSTMSearchCell`, `BiLSTMSerach` (BiLSTM with attnetion mechanism)
 ### 2️⃣ 기왕하는거 데이터 구축부터 모델 배포까지 모든 과정을 구현해보고 싶다!
@@ -31,3 +31,10 @@ wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RN
   - `preprocess.py` (함수지향 - 데이터 전처리에 필요한 로직을 함수로 정의)
   - `rnns.py`(객체지향 - 각 RNN 모델을 `torch.nn.Module`로 추상화)
   - `tensors.py` (함수지향 - 데이터셋 -> `torch.Tensor` 변환에 필요한 로직을 함수로 정의)
+
+## 성능지표
+### Naver Sentiment Movie Corpus 긍/부정 이진분류
+모델 | f1 score | wandb 로그
+--- |----------| ---
+RNN  | 0.8411   | [힉습](https://wandb.ai/eubinecto/the-clean-rnns/runs/40ca3shv?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/20pfhypk/overview)
+LSTM  | 0.8522    | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/25wm1ome?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/25e9xjyz/overview) 
