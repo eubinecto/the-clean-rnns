@@ -38,7 +38,7 @@
 <summary> 예를 들면? </summary>
   
 #### Naver Sentiment Movie Corpus 긍/부정 이진분류 성능 비교 
-모델  | f1 score (test) | 파라미터 | 소요시간 | `hidden_size` | 하이퍼파라미터 |  wandb 로그
+모델  | f1 score (test) | 가중치 | 소요시간 | `hidden_size` | 하이퍼파라미터 |  wandb 로그
 --- | --- |--------| --- | ---| --- | --- 
 RNN  | 0.8411 | 16.4M | 18m 19s | 512 | 통일 | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/40ca3shv?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/20pfhypk/overview)
 LSTM |  0.8522 | 16.4M | 20m 18s | 443 | 통일 |  [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/3eilxpo4/overview) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/2vimv04k/overview) 
