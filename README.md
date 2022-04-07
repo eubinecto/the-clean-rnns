@@ -22,8 +22,7 @@ wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RN
   
 - [X] `RNNCell`, `RNN`
 - [X] `LSTMCell`, `LSTM`
-- [ ] `BiLSTMCell`, `BiLSTM`
-- [ ] `BiLSTMSearchCell`, `BiLSTMSerach` (BiLSTM with attnetion mechanism)
+- [ ]  🚧 `BiLSTMCell`, `BiLSTM` 🚧
   
 </details>
 
@@ -61,7 +60,7 @@ LSTM | 0.9184           | 0.8567     | **0.8522** | 통제변인     | [학습](
 - [X] `run_train.py` (모델 훈련)
 - [X] `run_test.py` (모델 평가) 
 - [X] `run_deploy.py` (모델 배포)
-- [ ] `run_tune.py` (하이퍼파라미터 튜닝)
+- [ ] 🚧 `run_tune.py` (하이퍼파라미터 튜닝)  🚧
   
 </details>
 
