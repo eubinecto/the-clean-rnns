@@ -3,12 +3,12 @@ import pytorch_lightning as pl
 from typing import Union, Tuple, List
 from torch.nn import functional as F
 from torchmetrics import functional as mF
-from cleanrnns.rnns import RNN, LSTM, BiLSTM, BiLSTMSearch
+from cleanrnns.rnns import RNN, LSTM, BiLSTM
 
 
 # --- lightning modules --- #
 class ClassificationBase(pl.LightningModule):
-    def __init__(self, encoder: Union[RNN, LSTM, BiLSTM, BiLSTMSearch], num_classes: int):
+    def __init__(self, encoder: Union[RNN, LSTM, BiLSTM], num_classes: int):
         super().__init__()
         self.encoder = encoder
         self.classifier = torch.nn.Linear(self.hparams['hidden_size'], num_classes)
@@ -115,17 +115,7 @@ class BiLSTMForClassification(ClassificationBase):
     def __init__(self, vocab_size: int, hidden_size: int,
                  num_classes: int, lr: float, depth: int):
         self.save_hyperparameters()
-        super().__init__(BiLSTM(), num_classes)
-        raise NotImplementedError
-
-
-class BiLSTMSearchForClassification(ClassificationBase):
-
-    def __init__(self, vocab_size: int, hidden_size: int,
-                 num_classes: int, lr: float, depth: int):
-        self.save_hyperparameters()
-        super().__init__(BiLSTMSearch(), num_classes)
-        raise NotImplementedError
+        super().__init__(BiLSTM(vocab_size, hidden_size, depth), num_classes)
 
 
 class Seq2SeqBase(pl.LightningModule):

@@ -4,8 +4,7 @@ import wandb
 from typing import Tuple
 from tokenizers import Tokenizer
 from wandb.sdk.wandb_run import Run
-from cleanrnns.models import RNNForClassification, ClassificationBase, LSTMForClassification, BiLSTMForClassification, \
-    BiLSTMSearchForClassification
+from cleanrnns.models import ClassificationBase, RNNForClassification, LSTMForClassification, BiLSTMForClassification
 from cleanrnns.paths import CONFIG_YAML
 from cleanrnns.pipelines import PipelineForClassification
 
@@ -62,8 +61,6 @@ def fetch_model_for_classification(entity: str, name: str, run: Run = None) -> C
         model = LSTMForClassification.load_from_checkpoint(ckpt_path)
     elif name == "bilstm_for_classification":
         model = BiLSTMForClassification.load_from_checkpoint(ckpt_path)
-    elif name == "bilstmsearch_for_classification":
-        model = BiLSTMSearchForClassification.load_from_checkpoint(ckpt_path)
     else:
         raise ValueError
     return model
