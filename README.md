@@ -34,7 +34,7 @@ wandb와 pytorch-lightning으로 밑바닥부터 깔끔하게 구현해보는 RN
 
 ## 성능지표
 ### Naver Sentiment Movie Corpus 긍/부정 이진분류
-모델 | f1 score | wandb 로그
---- |----------| ---
-RNN  | 0.8411   | [힉습](https://wandb.ai/eubinecto/the-clean-rnns/runs/40ca3shv?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/20pfhypk/overview)
-LSTM  | 0.8522    | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/25wm1ome?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/25e9xjyz/overview) 
+모델 | f1 score (train) | f1 score (validation) | f1 score (test) | 하이퍼파라미터 | wandb 로그
+--- |------------------|------------| --- |--------| ---
+RNN  | 0.8866           | 0.8457     | 0.8411 | 통일     | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/40ca3shv?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/20pfhypk/overview)
+LSTM | 0.9184           | 0.8567     | 0.8522 | 통일     | [학습](https://wandb.ai/eubinecto/the-clean-rnns/runs/25wm1ome?workspace=user-eubinecto) / [테스트](https://wandb.ai/eubinecto/the-clean-rnns/runs/25e9xjyz/overview) 
