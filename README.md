@@ -17,7 +17,7 @@
 
 ## Quick Start 
 
-데이터 구축부터 모델 평가까지 진행해볼 수 있는 [Colllab 노트북](https://github.com/eubinecto/the-clean-rnns/blob/main/README.md)을 만들어뒀어요. 실행을 해보면서 궁금한 점이 있다면 이슈를 남겨주세요 😊
+데이터 구축부터 모델 평가까지 진행해볼 수 있는 [Collab 노트북](https://colab.research.google.com/drive/1WIPOP5_xGHCKK4g8r9GjNiY_pLo5PA4e?usp=sharing)을 만들어뒀어요. 실행을 해보면서 궁금한 점이 있다면 이슈를 남겨주세요 😊
 
 
 ## Who is this project for?
