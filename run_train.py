@@ -4,7 +4,7 @@ import argparse
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
-from cleanrnns.models import RNNForClassification, LSTMForClassification
+from cleanrnns.models import RNNForClassification, LSTMForClassification, BiLSTMForClassification
 from cleanrnns.datamodules import NSMC
 from cleanrnns.fetchers import fetch_config, fetch_tokenizer
 from cleanrnns.paths import ROOT_DIR
@@ -35,9 +35,8 @@ def main():
             model = LSTMForClassification(tokenizer.get_vocab_size(), config['hidden_size'],
                                           config['num_classes'], config['lr'], config['depth'])
         elif config['model'] == "bilstm_for_classification":
-            raise NotImplementedError
-        elif config['model'] == "bilstmsearch_for_classification":
-            raise NotImplementedError
+            model = BiLSTMForClassification(tokenizer.get_vocab_size(), config['hidden_size'],
+                                            config['num_classes'], config['lr'], config['depth'])
         else:
             raise ValueError
         logger = WandbLogger(log_model=False)
