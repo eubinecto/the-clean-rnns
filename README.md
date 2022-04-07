@@ -9,7 +9,7 @@
 </p>
 
 
-[wandb와](https://wandb.ai/site) [pytorch-lightning](https://pytorch-lightning.readthedocs.io/en/latest/)으로 밑바닥부터 깔끔하게 구현해보는 RNN 패밀리 👨‍👩‍👧‍👦
+[wandb](https://wandb.ai/site)와 [pytorch-lightning](https://pytorch-lightning.readthedocs.io/en/latest/)으로 밑바닥부터 깔끔하게 구현해보는 RNN 패밀리 👨‍👩‍👧‍👦
 
 
 ## Shortcuts
