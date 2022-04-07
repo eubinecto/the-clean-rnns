@@ -15,6 +15,11 @@
 ## Shortcuts
 [`RNNCell`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L24-L45) / [`RNN`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L48-L56) / [`LSTMCell`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L59-L89) / [`LSTM`](https://github.com/eubinecto/the-clean-rnns/blob/0e30c8035f9ea29bd96edc23e8a8f9b8457a8a3c/cleanrnns/rnns.py#L92-L98) / [`BiLSTMCell`](https://github.com/eubinecto/the-clean-rnns/blob/e718b0ae556702b3ca14e6b423afecd62a91f845/cleanrnns/rnns.py#L110-L122) /  [`BiLSTM`](https://github.com/eubinecto/the-clean-rnns/blob/e718b0ae556702b3ca14e6b423afecd62a91f845/cleanrnns/rnns.py#L125-L132)
 
+## Quick Start 
+
+데이터 구축부터 모델 평가까지 진행해볼 수 있는 [Collab 노트북](https://colab.research.google.com/drive/1WIPOP5_xGHCKK4g8r9GjNiY_pLo5PA4e?usp=sharing)을 만들어뒀어요. 실행을 해보면서 궁금한 점이 있다면 이슈를 남겨주세요 😊
+
+
 ## Who is this project for?
 ### 1️⃣ RNN 패밀리를 Pytorch로 밑바닥부터 구현해보고 싶다!
 `cleanrnns/rnns.py`에 깔끔하게 구현해뒀어요 😊 
@@ -88,6 +93,8 @@ BiLSTM | **0.8539** | 16.4M | **36m 12s** | 387 | 통일 |  [학습](https://wan
 </details>
 
 
-## Quick Start 
+## To-do's
+- [ ] classification with attention mechanism
+- [ ] seq2seq 지원
+- [ ] ner 지원
 
- 🚧 작업중 🚧
