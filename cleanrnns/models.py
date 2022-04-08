@@ -1,8 +1,8 @@
-import torch
+import torch  # noqa
 import pytorch_lightning as pl
 from typing import Union, Tuple, List
-from torch.nn import functional as F
-from torchmetrics import functional as mF
+from torch.nn import functional as F  # noqa
+from torchmetrics import functional as mF  # noqa
 from cleanrnns.rnns import RNN, LSTM, BiLSTM
 
 
@@ -113,7 +113,7 @@ class LSTMForClassification(ClassificationBase):
 class BiLSTMForClassification(ClassificationBase):
 
     def __init__(self, vocab_size: int, hidden_size: int,
-                 num_classes: int, lr: float, depth: int):
+                 num_classes: int, lr: float, depth: int):  # noqa
         self.save_hyperparameters()
         super().__init__(BiLSTM(vocab_size, hidden_size, depth), num_classes)
 

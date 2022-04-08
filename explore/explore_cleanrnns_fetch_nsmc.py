@@ -3,7 +3,7 @@ from fetchers import fetch_nsmc
 
 
 def main():
-    train, _, _ = fetch_nsmc(entity="eubinecto")
+    train, _, _ = fetch_nsmc()
     for row in train.data:
         print(row[0], row[1])
     shutil.rmtree("artifacts")  # clear the cache after testing

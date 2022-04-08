@@ -9,7 +9,7 @@ def main():
     config = fetch_config()['rnn_for_classification']
     config['num_workers'] = os.cpu_count()
     config['entity'] = "eubinecto"
-    tokenizer = fetch_tokenizer("eubinecto")
+    tokenizer = fetch_tokenizer()
     datamodule = NSMC(config, tokenizer)
     datamodule.prepare_data()
     datamodule.setup()  # this will tak some time

@@ -3,7 +3,7 @@ from fetchers import fetch_tokenizer
 
 
 def main():
-    tokenizer = fetch_tokenizer(entity="eubinecto")
+    tokenizer = fetch_tokenizer()
     # retrieve the registered special tokens
     print(tokenizer.pad_token)  # noqa
     print(tokenizer.token_to_id(tokenizer.pad_token))  # noqa
