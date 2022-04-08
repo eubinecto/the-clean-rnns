@@ -6,7 +6,7 @@ from typing import Tuple
 
 
 class RNNFamily(torch.nn.Module):
-    def __init__(self, vocab_size: int, hidden_size: int, cells: torch.nn.ModuleList):
+    def __init__(self, vocab_size: int, hidden_size: int, cells: torch.nn.Sequential):
         super().__init__()
         self.embeddings = torch.nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_size)
         self.cells = cells
@@ -17,8 +17,7 @@ class RNNFamily(torch.nn.Module):
         :return: memories (N, L, H)
         """
         x = self.embeddings(x)  # (N, L) -> (N, L, H)
-        for cell in self.cells:
-            x = cell(x)
+        x = self.cells(x)
         return x
 
 
@@ -58,7 +57,7 @@ class RNN(RNNFamily):
     """
     def __init__(self, vocab_size: int, hidden_size: int, depth: int):
         super().__init__(vocab_size, hidden_size,
-                         cells=torch.nn.ModuleList([RNNCell(hidden_size) for _ in range(depth)]))
+                         cells=torch.nn.Sequential(*[RNNCell(hidden_size) for _ in range(depth)]))
 
 
 class LSTMCell(torch.nn.Module):
@@ -104,7 +103,7 @@ class LSTM(RNNFamily):
     """
     def __init__(self, vocab_size: int, hidden_size: int, depth: int):
         super().__init__(vocab_size, hidden_size,
-                         cells=torch.nn.ModuleList([LSTMCell(hidden_size) for _ in range(depth)]))
+                         cells=torch.nn.Sequential(*[LSTMCell(hidden_size) for _ in range(depth)]))
 
 
 class BiLSTMCell(torch.nn.Module):
@@ -129,4 +128,4 @@ class BiLSTM(RNNFamily):
     """
     def __init__(self, vocab_size: int, hidden_size: int, depth: int):
         super().__init__(vocab_size, hidden_size,
-                         cells=torch.nn.ModuleList([BiLSTMCell(hidden_size) for _ in range(depth)]))
+                         cells=torch.nn.Sequential(*[BiLSTMCell(hidden_size) for _ in range(depth)]))
