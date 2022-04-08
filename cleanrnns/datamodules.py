@@ -7,9 +7,9 @@ from typing import Optional, Tuple
 import pytorch_lightning as pl
 import wandb
 from tokenizers import Tokenizer
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader  # noqa
 from wandb.sdk.wandb_run import Run
-from cleanrnns import tensors as T
+from cleanrnns import tensors as T  # noqa
 from cleanrnns.fetchers import fetch_nsmc
 from cleanrnns.datasets import DatasetForClassification
 
@@ -36,7 +36,7 @@ class NSMC(pl.LightningDataModule):
         """
         prepare: download all data needed for this from wandb to local.
         """
-        self.nsmc = fetch_nsmc(self.config['entity'], run=self.run)
+        self.nsmc = fetch_nsmc(run=self.run)
 
     def setup(self, stage: Optional[str] = None):
         if stage == "fit" or stage is None:

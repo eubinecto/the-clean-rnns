@@ -1,7 +1,7 @@
 """
 https://pytorch.org/docs/stable/generated/torch.fliplr.html
 """
-import torch
+import torch  # noqa
 
 
 def main():

@@ -1,7 +1,7 @@
 import os
 import wandb
 import argparse
-import torch
+import torch  # noqa
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from cleanrnns.models import RNNForClassification, LSTMForClassification, BiLSTMForClassification
@@ -13,7 +13,6 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("entity", type=str)
     parser.add_argument("model", type=str)
     parser.add_argument("--num_workers", type=int, default=os.cpu_count())
     parser.add_argument("--log_every_n_steps", type=int, default=1)
@@ -24,10 +23,11 @@ def main():
     # prepare the datamodule
     config = fetch_config()[args.model]
     config.update(vars(args))
-    with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
-        # --- prepare a pre-trained tokenizer & a module to train --- #
-        tokenizer = fetch_tokenizer(config['entity'], run)
+    with wandb.init(project="the-clean-rnns", config=config) as run:
+        # --- prepare the tokenizer & dataset to use for training --- #
+        tokenizer = fetch_tokenizer(run)
         datamodule = NSMC(config, tokenizer, run)
+        # --- prepare the model to train --- #
         if config['model'] == "rnn_for_classification":
             model = RNNForClassification(tokenizer.get_vocab_size(), config['hidden_size'],
                                          config['num_classes'], config['lr'], config['depth'])
@@ -39,6 +39,7 @@ def main():
                                             config['num_classes'], config['lr'], config['depth'])
         else:
             raise ValueError
+        # --- prepare a trainer instance --- #
         logger = WandbLogger(log_model=False)
         trainer = pl.Trainer(max_epochs=config['max_epochs'],
                              fast_dev_run=config['fast_dev_run'],
@@ -49,9 +50,9 @@ def main():
                              default_root_dir=str(ROOT_DIR),
                              enable_checkpointing=False,
                              logger=logger)
-        # start training
+        # --- start training --- #
         trainer.fit(model=model, datamodule=datamodule)
-        # upload the model to wandb only if the training is properly done
+        # --- upload the model to wandb only if the training is properly done --- #
         if not config['fast_dev_run'] and not trainer.interrupted:
             ckpt_path = ROOT_DIR / "model.ckpt"
             trainer.save_checkpoint(str(ckpt_path))

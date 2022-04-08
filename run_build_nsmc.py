@@ -7,11 +7,7 @@ from cleanrnns.preprocess import cleanse, stratified_split
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("entity", type=str)
-    args = parser.parse_args()
     config = fetch_config()["nsmc"]
-    config.update(vars(args))
     Korpora.fetch("nsmc")
     nsmc = NSMCKorpus()
     train_df = pd.DataFrame([(example.text, example.label) for example in nsmc.train], columns=["text", "label"])
@@ -24,7 +20,7 @@ def main():
     train = wandb.Table(data=train_df)
     val = wandb.Table(data=val_df)
     test = wandb.Table(data=test_df)
-    with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
+    with wandb.init(project="the-clean-rnns", config=config) as run:
         artifact = wandb.Artifact(name="nsmc", type="dataset", metadata=config, description=config['desc'])
         artifact.add(train, name="train")
         artifact.add(val, name="val")

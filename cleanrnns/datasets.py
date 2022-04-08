@@ -1,6 +1,6 @@
-import torch
+import torch  # noqa
+from torch.utils.data import Dataset  # noqa
 from typing import Tuple
-from torch.utils.data import Dataset
 
 
 class DatasetForClassification(Dataset):

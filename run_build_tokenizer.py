@@ -8,7 +8,6 @@ https://huggingface.co/docs/tokenizers/python/latest/components.html
 import os
 from itertools import chain
 import wandb
-import argparse
 from tokenizers import pre_tokenizers, normalizers
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
@@ -21,11 +20,7 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("entity", type=str)
-    args = parser.parse_args()
     config = fetch_config()["tokenizer"]
-    config.update(vars(args))
     # --- prepare a tokenizer --- #
     special_tokens = [config['pad'], config['unk'], config['bos'], config['eos']]
     # tokenizer = Tokenizer(BPE(unk_token=config['unk']))
@@ -35,15 +30,15 @@ def main():
     # --- pre & post processing --- #
     tokenizer.pre_tokenizer = pre_tokenizers.Sequence([Whitespace(), Digits(), Punctuation()])  # noqa
     tokenizer.normalizer = normalizers.Sequence([Lowercase()])  # noqa
-    with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
+    with wandb.init(project="the-clean-rnns", config=config) as run:
         # --- prepare the data --- #
-        train, val, test = fetch_nsmc(config['entity'], run)
+        train, val, test = fetch_nsmc(run)
         iterator = chain((row[0] for row in train.data),
                          (row[0] for row in val.data),
                          (row[0] for row in test.data))
         # --- train the tokenizer --- #
         tokenizer.train_from_iterator(iterator, trainer=trainer)
-        # save to local, and then to wandb
+        # --- save to local, and then to wandb --- #
         json_path = ROOT_DIR / "tokenizer.json"
         tokenizer.save(str(json_path), pretty=True)  # noqa
         artifact = wandb.Artifact(name="tokenizer", type="other", metadata=config, description=config['desc'])

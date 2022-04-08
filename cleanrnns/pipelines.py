@@ -1,8 +1,8 @@
-import torch
+import torch  # noqa
 from typing import Tuple, List
 from tokenizers import Tokenizer
 from cleanrnns.models import ClassificationBase
-from cleanrnns import tensors as T
+from cleanrnns import tensors as T  # noqa
 
 
 class PipelineForClassification:

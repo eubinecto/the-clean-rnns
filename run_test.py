@@ -1,7 +1,7 @@
 import os
 import wandb
 import argparse
-import torch
+import torch  # noqa
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from cleanrnns.datamodules import NSMC
@@ -12,7 +12,6 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("entity", type=str)
     parser.add_argument("model", type=str)
     parser.add_argument("--num_workers", type=int, default=os.cpu_count())
     parser.add_argument("--fast_dev_run", action="store_true", default=False)
@@ -20,11 +19,10 @@ def main():
     # prepare the datamodule
     config = fetch_config()[args.model]
     config.update(vars(args))
-
-    with wandb.init(entity=config['entity'], project="the-clean-rnns", config=config) as run:
+    with wandb.init(project="the-clean-rnns", config=config) as run:
         # --- prepare a pre-trained tokenizer & a module to train --- #
-        tokenizer = fetch_tokenizer(config['entity'], run)
-        model = fetch_model_for_classification(config['entity'], config['model'], run)
+        tokenizer = fetch_tokenizer(run)
+        model = fetch_model_for_classification(config['model'], run)
         datamodule = NSMC(config, tokenizer, run)
         logger = WandbLogger(log_model=False)
         trainer = pl.Trainer(fast_dev_run=config['fast_dev_run'],

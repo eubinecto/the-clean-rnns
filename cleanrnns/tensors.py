@@ -3,7 +3,8 @@ from typing import List, Tuple, Optional
 from tokenizers import Tokenizer, Encoding
 
 
-def inputs_for_classification(text2label: List[Tuple[str, Optional[int]]], max_length: int, tokenizer: Tokenizer) -> torch.Tensor:
+def inputs_for_classification(text2label: List[Tuple[str, Optional[int]]], max_length: int, tokenizer: Tokenizer) \
+        -> torch.Tensor:
     texts = [text for text, _ in text2label]
     pad_token = tokenizer.pad_token  # noqa
     tokenizer.enable_padding(pad_token=pad_token,
