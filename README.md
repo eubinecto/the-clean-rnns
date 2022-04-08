@@ -190,8 +190,8 @@ RNN, LSTM, BiLSTM을 구축한 데이터에 학습시킵니다. `hidden_size`, `
 ### 모델 평가
 ```shell
 python3 run_test.py rnn_for_classification
-python3 run_test.py rnn_for_classification
-python3 run_test.py rnn_for_classification
+python3 run_test.py lstm_for_classification
+python3 run_test.py bilstm_for_classification
 ```
 RNN, LSTM, BiLSTM의 성능을 구축한 테스트셋으로 측정합니다. 
 
