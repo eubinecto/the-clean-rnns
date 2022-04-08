@@ -198,7 +198,7 @@ RNN, LSTM, BiLSTM의 성능을 구축한 테스트셋으로 측정합니다.
 ### 모델 배포 (로컬)
 
 ```shell
-streamlit run_deploy.py
+streamlit run run_deploy.py
 ```
 웹에 배포를 원하신다면 [Streamlit Cloud](https://streamlit.io/cloud) 사용을 추천!
 
