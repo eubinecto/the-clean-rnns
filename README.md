@@ -3,6 +3,8 @@
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/eubinecto/the-clean-rnns/main/run_deploy.py)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1ThRBOZYjJNZmOcs173qZroyaotNe7tSc?usp=sharing)
  <a href="https://wandb.ai/eubinecto/the-clean-rnns/artifacts"><img src="https://raw.githubusercontent.com/wandb/assets/main/wandb-github-badge-28-gray.svg" height=20></a>
+ [![Total alerts](https://img.shields.io/lgtm/alerts/g/eubinecto/the-clean-rnns.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/eubinecto/the-clean-rnns/alerts/)
+ [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/eubinecto/the-clean-rnns.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/eubinecto/the-clean-rnns/context:python)
 
 <p align="center">
   <img width="836" alt="image" src="https://user-images.githubusercontent.com/56193069/162101921-48ca93d2-787b-4eef-8a5b-00f31a3dba8c.png">
