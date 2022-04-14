@@ -92,7 +92,7 @@ BiLSTM | **0.8539** | 16.4M | **36m 12s** | 387 | 통일 |  [학습](https://wan
 
 ## Quick Start 
 
-데이터 구축부터 모델 평가까지 진행해볼 수 있는 [Colab 노트북](https://colab.research.google.com/drive/1WIPOP5_xGHCKK4g8r9GjNiY_pLo5PA4e?usp=sharing)을 만들어뒀어요. 실행을 해보면서 궁금한 점이 있다면 이슈를 남겨주세요 😊
+데이터 구축부터 모델 평가까지 진행해볼 수 있는 [Colab 노트북](https://colab.research.google.com/drive/1ThRBOZYjJNZmOcs173qZroyaotNe7tSc?usp=sharing)을 만들어뒀어요. 실행을 해보면서 궁금한 점이 있다면 이슈를 남겨주세요 😊
 
 ### 프로젝트 설치 및 환경설정
 
