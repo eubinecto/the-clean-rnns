@@ -23,13 +23,13 @@ class RNNFamily(torch.nn.Module):
 
 class RNNCell(torch.nn.Module):
     """
-    optimised version of RNNCell
+    RNN Cell with
     weights = 2 * H^2
     """
 
     def __init__(self, hidden_size: int):
         super().__init__()
-        self.W = torch.nn.Linear(hidden_size * 2, hidden_size)  # (H * 2, H)
+        self.weights = torch.nn.Linear(hidden_size * 2, hidden_size)  # (H * 2, H)
         self.register_buffer("dummy", torch.zeros(hidden_size))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -46,7 +46,7 @@ class RNNCell(torch.nn.Module):
             now = x[:, time]  # (N, L, H) -> (N, H)
             short_and_now = torch.concat([short, now], dim=-1)  # (N, H), (N, H) -> (N, H * 2)
             # why? A * W_A + B * W_B = A_cat_B * W_A_cat_W_B
-            short = torch.tanh(self.W(short_and_now))  # (N, H * 2) * (H * 2, H)  -> (N, H)
+            short = torch.tanh(self.weights(short_and_now))  # (N, H * 2) * (H * 2, H)  -> (N, H)
             memories.append(short)
         return torch.stack(memories, dim=1)  # ... -> (N, L, H)
 
@@ -70,10 +70,7 @@ class LSTMCell(torch.nn.Module):
 
     def __init__(self, hidden_size: int):
         super().__init__()
-        self.W_f = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
-        self.W_i = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
-        self.W_o = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
-        self.W_h = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
+        self.weights = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size * 4)
         self.register_buffer("dummy", torch.zeros(hidden_size))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -81,17 +78,18 @@ class LSTMCell(torch.nn.Module):
         :param x - (N, L, H)
         :return: memories (N, L, H)
         """
-        N, L, _ = x.shape
+        N, L, H = x.shape
         memories = list()
         long = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
         short = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
         for time in range(L):
             now = x[:, time]  # (N, L, H) -> (N, H)
             short_and_now = torch.concat([short, now], dim=-1)  # (N, H), (N, H) -> (N, H * 2)
-            f = torch.sigmoid(self.W_f(short_and_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
-            i = torch.sigmoid(self.W_i(short_and_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
-            o = torch.sigmoid(self.W_o(short_and_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
-            h = self.W_h(short_and_now)  # (N, H * 2) * (H * 2, H) -> (N, H)
+            gates = self.weights(short_and_now)  # (N, H * 2) *  (H * 2, H * 4) -> (N, H * 4)
+            f = torch.sigmoid(gates[:, :H])  # (N, H * 4) -> (N, H) -> (N, H)
+            i = torch.sigmoid(gates[:, H:H*2])  # (N, H * 4) * (N, H) -> (N, H)
+            o = torch.sigmoid(gates[:, H*2:H*3])  # (N, H * 4) * (N, H) -> (N, H)
+            h = torch.tanh(gates[L, H*3:H*4])  # (N, H * 4) * (N, H) -> (N, H)
             # forget parts of long-term memory, while adding parts of short-term memory to long-term memory
             long = torch.mul(f, long) + torch.mul(i, h)  # (N, H) + (N, H) -> (N, H)
             # generate short-term memory from parts of long-term memory
