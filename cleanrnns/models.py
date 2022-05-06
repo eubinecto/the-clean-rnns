@@ -1,129 +1,138 @@
+"""
+A simple implementation of the RNN family - RNN, LSTM, BiLSTM, BiLSTMSearch.
+"""
 import torch  # noqa
-import pytorch_lightning as pl
-from typing import Union, Tuple, List
-from torch.nn import functional as F  # noqa
-from torchmetrics import functional as mF  # noqa
-from cleanrnns.rnns import RNN, LSTM, BiLSTM
+from typing import Tuple
 
 
-# --- lightning modules --- #
-class ClassificationBase(pl.LightningModule):  # lgtm [py/missing-call-to-init]
-    def __init__(self, encoder: Union[RNN, LSTM, BiLSTM], num_classes: int):
+class RNNFamily(torch.nn.Module):
+    def __init__(self, vocab_size: int, hidden_size: int, cells: torch.nn.Sequential):
         super().__init__()
-        self.encoder = encoder
-        self.classifier = torch.nn.Linear(self.hparams['hidden_size'], num_classes)
+        self.embeddings = torch.nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_size)
+        self.cells = cells
+
+    def forward(self, x: torch.Tensor):
+        """
+        :param x: (N, L)
+        :return: memories (N, L, H)
+        """
+        x = self.embeddings(x)  # (N, L) -> (N, L, H)
+        x = self.cells(x)
+        return x
+
+
+class RNNCell(torch.nn.Module):
+    """
+    optimised version of RNNCell
+    weights = 2 * H^2
+    """
+
+    def __init__(self, hidden_size: int):
+        super().__init__()
+        self.W = torch.nn.Linear(hidden_size * 2, hidden_size)  # (H * 2, H)
+        self.register_buffer("dummy", torch.zeros(hidden_size))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        memories = self.encoder(x)  # (N, L) -> (N, L, H)
-        last = memories[:, -1]  # (N, L, H) -> (N, H)
-        return last
-
-    def predict(self, x: torch.Tensor) -> torch.Tensor:
-        last = self.forward(x)  # (N, L) -> (N, H)
-        logits = self.classifier(last)  # (N, H) -> (N, C)
-        probs = torch.softmax(logits, dim=-1)  # (N, C) -> (N, C) (normalised over C)
-        return probs
-
-    def on_train_start(self):
-        # deep models should be initialised with so-called "Xavier initialisation"
-        # refer to: https://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf
-        for param in self.parameters():
-            if param.dim() > 1:
-                torch.nn.init.xavier_uniform_(param)
-
-    def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor], *args) -> dict:
-        x, y = batch
-        last = self.forward(x)  # (N, L) -> (N, H)
-        logits = self.classifier(last)  # (N, H) -> (N, C)
-        loss = F.cross_entropy(logits, y).sum()  # (N, C), (N,) -> (N,) -> (,)
-        return {
-            "logits": logits.detach(),
-            "y": y.detach(),
-            "loss": loss
-        }
-
-    def training_step_end(self, step_output: dict):
-        self.log("Train/loss", step_output['loss'])
-
-    def training_epoch_end(self, outputs: List[dict]):
-        logits = torch.concat([out['logits'] for out in outputs], dim=0)  # noqa, num_batches * (N, C) -> (num_batches * N, C)
-        y = torch.concat([out['y'] for out in outputs], dim=0)  # # num_batches * (N,) -> (num_batches * N,)
-        f1_score = mF.f1_score(preds=logits, target=y)
-        accuracy = mF.accuracy(preds=logits, target=y)
-        self.log("Train/f1_score", f1_score)
-        self.log("Train/accuracy", accuracy)
-
-    def validation_step(self, batch: Tuple[torch.Tensor, torch.Tensor], *args) -> dict:
-        return self.training_step(batch)
-
-    def validation_step_end(self, step_output: dict):
-        self.log("Validation/loss", step_output['loss'])
-
-    def validation_epoch_end(self, outputs: List[dict]):
-        logits = torch.concat([out['logits'] for out in outputs], dim=0)  # noqa, num_batches * (N, C) -> (num_batches * N, C)
-        y = torch.concat([out['y'] for out in outputs], dim=0)  # num_batches * (N,) -> (num_batches * N,)
-        f1_score = mF.f1_score(preds=logits, target=y)
-        accuracy = mF.accuracy(preds=logits, target=y)
-        self.log("Validation/f1_score", f1_score)
-        self.log("Validation/accuracy", accuracy)
-
-    def test_step(self, batch: Tuple[torch.Tensor, torch.Tensor], * args) -> dict:
-        x, y = batch
-        memories = self.encoder(x)  # (N, L) -> (N, L, H)
-        last = memories[:, -1]  # (N, L, H) -> (N, H)
-        logits = self.classifier(last)  # (N, H) -> (N, C)
-        return {
-            "logits": logits.detach(),
-            "y": y.detach(),
-        }
-
-    def test_epoch_end(self, outputs: List[dict]):
-        logits = torch.concat([out['logits'] for out in outputs], dim=0)  # noqa, num_batches * (N, C) -> (num_batches * N, C)
-        y = torch.concat([out['y'] for out in outputs], dim=0)  # num_batches * (N,) -> (num_batches * N,)
-        f1_score = mF.f1_score(preds=logits, target=y)
-        accuracy = mF.accuracy(preds=logits, target=y)
-        self.log("Test/f1_score", f1_score)
-        self.log("Test/accuracy", accuracy)
-
-    def configure_optimizers(self) -> torch.optim.Optimizer:
         """
-        Instantiates and returns the optimizer to be used for this model
-        e.g. torch.optim.Adam
+        h_t = f_W(h_t-1(short), x_t(now))
+        h_t = tanh(W_hh * h_t-1 + W_xh * x_t)
+=        :param x - (N, L, H)
+        :return: memories - (N, L, H)
         """
-        # The authors used Adam, so we might as well use it as well.
-        return torch.optim.AdamW(self.parameters(), lr=self.hparams['lr'])
+        N, L, H = x.shape
+        memories = list()
+        short = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
+        for time in range(L):
+            now = x[:, time]  # (N, L, H) -> (N, H)
+            short_and_now = torch.concat([short, now], dim=-1)  # (N, H), (N, H) -> (N, H * 2)
+            # why? A * W_A + B * W_B = A_cat_B * W_A_cat_W_B
+            short = torch.tanh(self.W(short_and_now))  # (N, H * 2) * (H * 2, H)  -> (N, H)
+            memories.append(short)
+        return torch.stack(memories, dim=1)  # ... -> (N, L, H)
 
 
-class RNNForClassification(ClassificationBase):
-
-    def __init__(self, vocab_size: int, hidden_size: int,
-                 num_classes: int, lr: float, depth: int):  # noqa
-        self.save_hyperparameters()
-        super().__init__(RNN(vocab_size, hidden_size, depth), num_classes)
-
-
-class LSTMForClassification(ClassificationBase):
-
-    def __init__(self, vocab_size: int, hidden_size: int,
-                 num_classes: int, lr: float, depth: int):  # noqa
-        self.save_hyperparameters()
-        super().__init__(LSTM(vocab_size, hidden_size, depth), num_classes)
-
-
-class BiLSTMForClassification(ClassificationBase):
-
-    def __init__(self, vocab_size: int, hidden_size: int,
-                 num_classes: int, lr: float, depth: int):  # noqa
-        self.save_hyperparameters()
-        super().__init__(BiLSTM(vocab_size, hidden_size, depth), num_classes)
-
-
-class Seq2SeqBase(pl.LightningModule):
+class RNN(RNNFamily):
     """
-    i.e. conditional generator.
+    A vanilla  multi-layer RNN.
+    H * H * 2 + V * H = 2*H^2 + V*H = H(2H + V)
+    https://medium.com/ecovisioneth/building-deep-multi-layer-recurrent-neural-networks-with-star-cell-2f01acdb73a7
     """
-    pass
+
+    def __init__(self, vocab_size: int, hidden_size: int, depth: int):
+        super().__init__(vocab_size, hidden_size,
+                         cells=torch.nn.Sequential(*[RNNCell(hidden_size)for _ in range(depth)]))
 
 
-class NERBase(pl.LightningModule):
-    pass
+class LSTMCell(torch.nn.Module):
+    """
+    weights = 2 * H * H * 4 = 8 * H^2. (4 * RNNCell)
+    """
+
+    def __init__(self, hidden_size: int):
+        super().__init__()
+        self.W_f = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
+        self.W_i = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
+        self.W_o = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
+        self.W_h = torch.nn.Linear(in_features=hidden_size * 2, out_features=hidden_size)
+        self.register_buffer("dummy", torch.zeros(hidden_size))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        :param x - (N, L, H)
+        :return: memories (N, L, H)
+        """
+        N, L, _ = x.shape
+        memories = list()
+        long = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
+        short = self.dummy.unsqueeze(0).expand(N, -1)  # (H) -> (1, H) ->  (N, H)
+        for time in range(L):
+            now = x[:, time]  # (N, L, H) -> (N, H)
+            short_and_now = torch.concat([short, now], dim=-1)  # (N, H), (N, H) -> (N, H * 2)
+            f = torch.sigmoid(self.W_f(short_and_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
+            i = torch.sigmoid(self.W_i(short_and_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
+            o = torch.sigmoid(self.W_o(short_and_now))  # (N, H * 2) * (H * 2, H) -> (N, H)
+            h = self.W_h(short_and_now)  # (N, H * 2) * (H * 2, H) -> (N, H)
+            # forget parts of long-term memory, while adding parts of short-term memory to long-term memory
+            long = torch.mul(f, long) + torch.mul(i, h)  # (N, H) + (N, H) -> (N, H)
+            # generate short-term memory from parts of long-term memory
+            short = torch.mul(o, torch.tanh(long))  # (N, H) + (N, H) -> (N, H)
+            memories.append(short)
+        return torch.stack(memories, dim=1)  # ... -> (N, L, H)
+
+
+class LSTM(RNNFamily):
+    """
+    A simple, multi-layer LSTM.
+    weights = H(8H + V)
+    """
+
+    def __init__(self, vocab_size: int, hidden_size: int, depth: int):
+        super().__init__(vocab_size, hidden_size,
+                         cells=torch.nn.Sequential(*[LSTMCell(hidden_size) for _ in range(depth)]))
+
+
+class BiLSTMCell(torch.nn.Module):
+    """
+    weights = 2 * 8 * H^2 = 16 * H^2
+    """
+
+    def __init__(self, hidden_size: int):
+        super().__init__()
+        self.lr = LSTMCell(hidden_size)
+        self.rl = LSTMCell(hidden_size)
+
+    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor]:
+        memories = self.lr(x)  # (N, L) -> (N, L, H)
+        memories = self.rl(torch.fliplr(memories))  # (N, L) -> (N, L, H)
+        return memories
+
+
+class BiLSTM(RNNFamily):
+    """
+    A simple, multi-layer LSTM.
+    weights = H(16H + V)
+    """
+
+    def __init__(self, vocab_size: int, hidden_size: int, depth: int):
+        super().__init__(vocab_size, hidden_size,
+                         cells=torch.nn.Sequential(*[BiLSTMCell(hidden_size) for _ in range(depth)]))
