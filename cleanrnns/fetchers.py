@@ -4,7 +4,7 @@ import wandb
 from typing import Tuple
 from tokenizers import Tokenizer
 from wandb.sdk.wandb_run import Run
-from cleanrnns.models import ClassificationBase, RNNForClassification, LSTMForClassification, BiLSTMForClassification
+from cleanrnns.modules import ClassificationBase, RNNForClassification, LSTMForClassification, BiLSTMForClassification
 from cleanrnns.paths import CONFIG_YAML
 from cleanrnns.pipelines import PipelineForClassification
 
@@ -45,7 +45,7 @@ def fetch_nsmc(run: Run = None) -> Tuple[wandb.Table, wandb.Table, wandb.Table]:
     return train, val, test  # noqa
 
 
-def fetch_model_for_classification(name: str, run: Run = None) -> ClassificationBase:
+def fetch_module_for_classification(name: str, run: Run = None) -> ClassificationBase:
     ver = fetch_config()[name]['ver']
     if run:
         artifact = run.use_artifact(f"{name}:{ver}", type="model")
@@ -73,7 +73,7 @@ def fetch_model_for_ner():
 
 
 def fetch_pipeline_for_classification(name: str, run: Run = None) -> PipelineForClassification:
-    model = fetch_model_for_classification(name, run)
+    model = fetch_module_for_classification(name, run)
     model.eval()
     tokenizer = fetch_tokenizer(run)
     config = fetch_config()[name]

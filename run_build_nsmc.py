@@ -1,4 +1,3 @@
-import argparse
 import pandas as pd
 import wandb
 from Korpora import Korpora, NSMCKorpus
@@ -11,12 +10,10 @@ def main():
     Korpora.fetch("nsmc")
     nsmc = NSMCKorpus()
     train_df = pd.DataFrame([(example.text, example.label) for example in nsmc.train], columns=["text", "label"])
-    test_df = pd.DataFrame([(example.text, example.label) for example in nsmc.test], columns=["text", "label"])
-    # preprocessing
-    test_df = test_df.pipe(cleanse)
-    # we construct a validation set here
-    val_df, train_df = train_df.pipe(cleanse)\
+    val_df, train_df = train_df.pipe(cleanse) \
                                .pipe(stratified_split, ratio=config['val_ratio'], seed=config['seed'])
+    test_df = pd.DataFrame([(example.text, example.label) for example in nsmc.test], columns=["text", "label"])
+    test_df = test_df.pipe(cleanse)
     train = wandb.Table(data=train_df)
     val = wandb.Table(data=val_df)
     test = wandb.Table(data=test_df)
