@@ -16,8 +16,8 @@ tokenizer:
 
 
 rnn_for_classification:
-  ver: cls-nsmc-with-val-overfit-1
-  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is over-fitted to nsmc:with-val. Padding strategy = left "
+  ver: cls-nsmc-with-val-optimised
+  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is over-fitted to nsmc:with-val. Padding strategy = left. Optimised with parallelism."
   max_epochs: 3
   batch_size: 1024
   max_length: 150
@@ -28,8 +28,8 @@ rnn_for_classification:
   num_classes: 2
 
 lstm_for_classification:
-  ver: cls-nsmc-with-val-reduced
-  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is trained on nsmc:with-val. Padding strategy = left. The number of weights is reduced to match RNN"
+  ver: cls-nsmc-with-val-reduced-optimised
+  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is trained on nsmc:with-val. Padding strategy = left. The number of weights is reduced to match RNN.  Optimised with parallelism."
   max_epochs: 3
   batch_size: 1024
   max_length: 150
@@ -40,8 +40,8 @@ lstm_for_classification:
   num_classes: 2
 
 bilstm_for_classification:
-  ver: cls-nsmc-with-val-reduced
-  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is trained on nsmc:with-val. Padding strategy = left. The number of weights is reduced to match RNN"
+  ver: cls-nsmc-with-val-reduced-optimised
+  desc: "A baseline sentiment classifier (hence the `cls` prefix). It is trained on nsmc:with-val. Padding strategy = left. The number of weights is reduced to match RNN.  Optimised with parallelism."
   max_epochs: 3
   batch_size: 1024
   max_length: 150
